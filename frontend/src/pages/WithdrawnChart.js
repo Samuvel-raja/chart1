@@ -10,7 +10,14 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const WithDrawnChart = ({ wdata }) => {
   const [elabels, setElables] = useState([]);
@@ -28,11 +35,10 @@ const WithDrawnChart = ({ wdata }) => {
     const unitsMap = {};
 
     wdata.forEach((item) => {
-      if (typeof item === 'object') {
+      if (typeof item === "object") {
         const { type, units } = item;
         labelSet.add(type);
 
-     
         if (!unitsMap[type]) {
           unitsMap[type] = 0;
         }
@@ -43,36 +49,39 @@ const WithDrawnChart = ({ wdata }) => {
       }
     });
 
-
     const labelsArray = Array.from(labelSet);
 
-
-    const tempDatasets = [{
-      label: "Water Units",
-      data: labelsArray.map((label) => unitsMap[label] || 0), 
-      backgroundColor: labelsArray.map(
-        () => `rgb(85, 61, 233)`
-      ),
-      borderColor: labelsArray.map(        () => `rgb(85, 61, 233)
+    const tempDatasets = [
+      {
+        label: "Water Units",
+        data: labelsArray.map((label) => unitsMap[label] || 0),
+        backgroundColor: labelsArray.map(() => `rgb(85, 61, 233)`),
+        borderColor: labelsArray.map(
+          () => `rgb(85, 61, 233)
 `
-      ),
-    }];
+        ),
+      },
+    ];
 
-    setElables(labelsArray); 
-    setDatasets(tempDatasets); 
+    setElables(labelsArray);
+    setDatasets(tempDatasets);
   }, [wdata]);
 
   const data = {
-    labels: elabels, 
-    datasets: datasets, 
+    labels: elabels,
+    datasets: datasets,
   };
 
   const options = {
-    indexAxis: "y", 
+    indexAxis: "y",
     scales: {
       x: {
         beginAtZero: true,
+        grid: {
+          display: true,
+        },
       },
+     
       y: {
         grid: {
           display: false,
@@ -93,6 +102,10 @@ const WithDrawnChart = ({ wdata }) => {
         },
         position: "bottom",
       },
+      datadatalabels: {
+        display: false,
+      },
+      
     },
   };
 
