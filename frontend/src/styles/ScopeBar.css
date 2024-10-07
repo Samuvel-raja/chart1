@@ -1,0 +1,51 @@
+*
+{
+    box-sizing: border-box;
+    padding: 0%;
+    margin: 0%;
+}.header-scope-bar
+{
+    display: flex;
+    justify-content: space-evenly;
+    padding: 2px;
+    margin: 2px;
+}
+.main-scope-bar
+{
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--chart-box-shadow);
+}
+.bottom-scope-bar
+{
+    box-shadow: var(--chart-box-shadow);
+    margin: 30px;
+    border-radius: 5px;
+}
+.scope-head-1
+{
+    box-shadow: var(--chart-box-shadow);
+    width: 40%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 10px;
+}
+.scope-head-2
+{
+    box-shadow: var(--chart-box-shadow);
+    width: 55%;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 10px;
+}
+.scope-nav
+{
+    margin: 20px;
+}
+

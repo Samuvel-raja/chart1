@@ -1,0 +1,16 @@
+:root
+{
+  --chart-box-shadow:rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  --form-box-shadow:rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  --red:red;
+  --lightgray:lightgray;
+  --black:black;
+  --white:white;
+  --signup-button:#e15615;
+  /* --scope1-background-color:"rgba(54, 162, 235, 0.8)";
+  --scope1-border-color:"rgba(54, 162, 235, 1)";
+  --scope2-background-color:"rgba(75, 192, 192, 0.8)",;
+  --scope2-border-color:"rgba(75, 192, 192, 1)";
+  --scope3-background-color:"rgba(255, 206, 86, 0.8)";
+  --scope3-border-color:"rgba(255, 206, 86, 1)",; */
+}
