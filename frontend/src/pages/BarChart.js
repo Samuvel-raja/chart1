@@ -59,13 +59,17 @@ const HorizontalBarChart = ({ edata, fyears }) => {
       });
 
       if (emissions.length > 0) {
+        const backgroundColor = tempDatasets.length % 2 === 0 ? 'rgb(205, 213, 223)' : 'rgb(59, 130, 246)';
+        const borderColor = tempDatasets.length % 2 === 0 ? 'rgb(205, 213, 223)' : 'rgb(59, 130, 246)';
+    
         tempDatasets.push({
-          label: flabel,
-          data: emissions,
-          backgroundColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.8)`, 
-          borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`, 
+            label: flabel,
+            data: emissions,
+            backgroundColor: backgroundColor,
+            borderColor: borderColor,
         });
-      }
+    }
+    
     });
 
  
@@ -74,7 +78,7 @@ const HorizontalBarChart = ({ edata, fyears }) => {
       setElables([]); 
       setDatasets([]); 
     } else {
-      setElables(Array.from(labelSet)); 
+      setElables(Array.from(labelSet).sort()); 
       setDatasets(tempDatasets); 
     }
   }, [edata, fyears]); 

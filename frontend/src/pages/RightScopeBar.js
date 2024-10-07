@@ -29,13 +29,14 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
 
 
   const labels = [];
-  const datasets = fyears.map(year => ({
+  const datasets = fyears.map((year, index) => ({
     label: year.value,
     data: [],
     fill: false,
-    backgroundColor: 'rgba(75,192,192,0.4)',
-    borderColor: `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 1)`, // Random color for each line
-  }));
+    backgroundColor: index % 2 === 0 ? 'rgb(205, 213, 223)' : 'rgb(59, 130, 246)',
+    borderColor: index % 2 === 0 ? 'rgb(205, 213, 223)' : 'rgb(59, 130, 246)', 
+}));
+
 
 
   if (actualData.length > 0) {
@@ -43,20 +44,20 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
 
       const fiscalYear = item.fyear; 
 
-      const fiscalYearIndex = fyears.findIndex(year => year.value === fiscalYear); // Find the index of the fiscal year in fyears
+      const fiscalYearIndex = fyears.findIndex(year => year.value === fiscalYear); 
       if (fiscalYearIndex !== -1) {
         const startDate = new Date(item.start_date);
         const endDate = new Date(item.end_date);
 
-        // Loop through each month in the date range
+     
         while (startDate <= endDate) {
-          const month = startDate.toLocaleString('default', { month: 'short' }); // Use 'short' to get abbreviated month names
+          const month = startDate.toLocaleString('default', { month: 'short' }); 
           
-          // Check if the label already exists
+        
           const labelIndex = labels.indexOf(month);
           if (labelIndex === -1) {
             labels.push(month);
-            // Fill the data array with zeros for each dataset initially
+      
             datasets.forEach((dataset, index) => {
               dataset.data.push(index === fiscalYearIndex ? item.emissions : 0);
             });

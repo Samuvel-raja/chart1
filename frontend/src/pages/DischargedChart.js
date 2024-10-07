@@ -10,16 +10,9 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const WithDrawnChart = ({ wdata }) => {
+const DisChargedChart = ({ wdata }) => {
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
@@ -34,8 +27,9 @@ const WithDrawnChart = ({ wdata }) => {
     const labelSet = new Set();
     const unitsMap = {};
 
+ 
     wdata.forEach((item) => {
-      if (typeof item === "object" && item.status === "withdrawn") {
+      if (typeof item === "object" && item.status === "discharged") {
         const { type, units } = item;
         labelSet.add(type);
 
@@ -53,7 +47,7 @@ const WithDrawnChart = ({ wdata }) => {
 
     const tempDatasets = [
       {
-        label: "Withdrawn Units",
+        label: "Discharged Units",
         data: labelsArray.map((label) => unitsMap[label] || 0),
         backgroundColor: labelsArray.map(() => `rgb(85, 61, 233)`),
         borderColor: labelsArray.map(() => `rgb(85, 61, 233)`),
@@ -90,11 +84,12 @@ const WithDrawnChart = ({ wdata }) => {
         position: "top",
       },
       datalabels: {
-        display: false,
+        display: false, 
       },
+      
       title: {
         display: true,
-        text: "Withdrawn Units",
+        text: "Discharged Units",
         font: {
           size: 15,
           weight: "lighter",
@@ -108,10 +103,10 @@ const WithDrawnChart = ({ wdata }) => {
   };
 
   return (
-    <div>
-      <Bar data={data} options={options} height={300} width={500} />
+    <div className="water-bar-chart">
+      <Bar data={data} options={options} height={500} width={700} />
     </div>
   );
 };
 
-export default WithDrawnChart;
+export default DisChargedChart;

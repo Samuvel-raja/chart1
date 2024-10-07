@@ -1,0 +1,30 @@
+.water-cont-1,
+.water-cont-2,
+.water-cont-3,
+.water-cont-4 {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  justify-content: space-around;
+  gap: 10px;
+}
+.water-inside-cont-1 {
+  width: 40%;
+  box-shadow: var(--chart-box-shadow);
+  padding: 20px;
+}
+.water-inside-cont-2 {
+  width: 50%;
+  box-shadow: var(--chart-box-shadow);
+  padding: 20px;
+}
+.water-bar-chart {
+  display: flex;
+  justify-content: flex-start;
+  height:auto;
+}
+.main-water-cont
+{
+    padding: 20px;
+    box-shadow: var(--chart-box-shadow);
+}

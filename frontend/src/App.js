@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Emission from "./pages/Emission";
 import './App.css'
 import Water from "./pages/Water";
+import MainPage from "./pages/MainPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path='/emission' element={<Emission/>}/>
         <Route path='/water' element={<Water/>}/>
+        <Route path='/main' element={<MainPage/>}/>
       </Routes>
     </>
   );
