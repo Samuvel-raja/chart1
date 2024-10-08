@@ -2,24 +2,29 @@ const userModel = require("../models/userModel");
 const waterModel = require("../models/waterModel");
 const yearModel = require("../models/yearsWaterModel");
 
-const transformData = (data, fyear, id) => {
+const transformData = (data, fyear, organizationId) => {
   return data.map((item) => {
+    // Extract the CSV-like string from the item
+    const value = Object.values(item)[0];
 
-    const [key, value] = Object.entries(item)[0];
-    const [v_start_date, v_end_date, v_units, v_type, v_status] = value.split(",");
+    // Split the value string into respective fields
+    const [start_date, end_date, units, type, status] = value.split(",");
 
-
+    // Create and return the transformed object
     return {
-      start_date: v_start_date.trim(),
-      end_date: v_end_date.trim(),
-      units: parseInt(v_units.trim(), 10),
-      type: v_type.trim(),
-      status: v_status.trim(),
-      fyear, 
-      organization: id,
+      start_date: start_date.trim(),
+      end_date: end_date.trim(),
+      units: parseInt(units.trim(), 10),
+      type: type.trim(),
+      status: status.trim(),
+      fyear,
+      organization: organizationId,
     };
   });
 };
+
+
+
 
 const createWater = async (req, res) => {
   const token = req.cookies.token;

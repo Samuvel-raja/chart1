@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllWatersApi } from "../apicalls/waterApi";
 
+import Select from "react-select";
 import WithDrawnChart from "./WithdrawnChart";
 import DisChargedChart from "./DischargedChart";
 import ReCycledChart from "./ReCycledChart";
@@ -24,8 +25,61 @@ const Water = () => {
     }
   }, []);
 
+  console.log("wdata",wdata);
+  
+  const [SelectedOption, setSelectedOption] = useState();
+  const handleChange = (e) => {
+    setSelectedOption(e);
+  };
+  const fyears = new Set();
+  wdata.forEach((item) => {
+    if (item.fyear) {
+      fyears.add(item.fyear.fiscalyear);
+    }
+  });
+
+
+
+
+  
+  
+  const options = Array.from(fyears).map((val) => ({
+    value: val,
+    label: val,
+  }));
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      width: '25%',     
+      height: '5%',     
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      height: '5%',      
+      display: 'flex',
+      alignItems: 'center', 
+    }),
+    indicatorsContainer: (provided) => ({
+      ...provided,
+      height: '5%', 
+    }),
+    menu: (provided) => ({
+      ...provided,
+      width: '25%', 
+    })
+  };
   return (
     <>
+        <div className="scope-nav">
+        <Select
+          value={SelectedOption}
+          onChange={handleChange}
+          options={options} 
+          isMulti
+          styles={customStyles}
+        />
+      </div>
       <div className="main-water-cont">
         <div className="water-cont-1">
           <div className="water-inside-cont-1">

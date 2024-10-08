@@ -106,6 +106,7 @@ const BarChart = ({ eData, fyears }) => {
       legend: {
         position: "top",
       },
+      
       title: {
         display: true,
         text: "Fiscal Year Emissions Data",

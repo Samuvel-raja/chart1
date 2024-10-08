@@ -12,7 +12,13 @@ const MainPage = () => {
     <>
       <div>
         <Box>
-          <Tabs value={nav} onChange={handleChange}>
+          <Tabs value={nav} onChange={handleChange}
+          TabIndicatorProps={{sx:{display:"none"}}}
+          sx={{
+            '& button':{margin:1},
+            '& button:hover':{backgroundColor:'rgba(225, 221, 251, 0.3)',borderRadius:3},
+            '& button.Mui-selected':{color:'rgb(52, 25, 218)',backgroundColor:'rgba(225, 221, 251, 0.3)',borderRadius:3}
+          }}>
             <Tab label="Emissions" value="Emissions" />
             <Tab label="Water" value="Water" />
             <Tab label="Wastes" value="Wastes" />

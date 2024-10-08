@@ -95,9 +95,6 @@ const ReCycledChart = ({ wdata }) => {
         },
         position: "bottom",
       },
-      datadatalabels: {
-        display: false,
-      },
     },
   };
 
