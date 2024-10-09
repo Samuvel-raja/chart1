@@ -31,47 +31,47 @@ const BarChart = ({ eData, fyears }) => {
       return;
     }
     if (!fyears || fyears.length === 0) {
-      console.log("No fiscal years found");
+      console.log("No fiscal years selected. Clearing the chart.");
       setElables([]);
       setDatasets([]);
       return;
     }
 
     const labelSet = new Set(); 
-    const scopeData = { Scope1: [], Scope2: [], Scope3: [] }; 
+    const scopeData = {
+      Scope1: Array(fyears.length).fill(0),
+      Scope2: Array(fyears.length).fill(0),
+      Scope3: Array(fyears.length).fill(0),
+    }; 
 
-    fyears.forEach((fyear) => {
+    fyears.forEach((fyear, index) => {
       const flabel = typeof fyear === "object" ? fyear.label : fyear; 
-  
 
       eData.forEach((val) => {
         if (Array.isArray(val)) {
           val.forEach((item) => {
-            labelSet.add(item.fyear.fiscalyear); 
-
+          
             if (item.fyear.fiscalyear === flabel) {
-            
+              labelSet.add(flabel); 
+
+     
               if (item.scope.trim() === "scope1") {
-                scopeData.Scope1.push(item.emissions);
-             
+                scopeData.Scope1[index] += item.emissions; 
               } else if (item.scope.trim() === "scope2") {
-                scopeData.Scope2.push(item.emissions);
-               
+                scopeData.Scope2[index] += item.emissions; 
               } else if (item.scope.trim() === "scope3") {
-                scopeData.Scope3.push(item.emissions);
-            
+                scopeData.Scope3[index] += item.emissions; 
               }
             }
           });
         }
       });
-
     });
 
     const uniqueFiscalYears = Array.from(labelSet); 
-    setElables(uniqueFiscalYears);
+    setElables(uniqueFiscalYears); 
 
-
+  
     setDatasets([
       {
         label: "Scope 1",
@@ -94,10 +94,9 @@ const BarChart = ({ eData, fyears }) => {
     ]);
   }, [eData, fyears]);
 
-
   const data = {
     labels: elabels, 
-    datasets: datasets,
+    datasets: datasets, 
   };
 
   const options = {
@@ -106,7 +105,6 @@ const BarChart = ({ eData, fyears }) => {
       legend: {
         position: "top",
       },
-      
       title: {
         display: true,
         text: "Fiscal Year Emissions Data",
