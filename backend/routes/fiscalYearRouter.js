@@ -1,5 +1,5 @@
 const express=require('express');
-const { creatYears, getAllYears } = require('../controllers/yearsWaterController');
+const { creatYears, getAllYears } = require('../controllers/fiscalYearController');
 
 const yearRouter=express.Router();
 

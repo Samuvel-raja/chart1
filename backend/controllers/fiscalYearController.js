@@ -1,5 +1,5 @@
 const userModel = require("../models/userModel");
-const yearModel = require("../models/yearsWaterModel")
+const yearModel = require("../models/fiscalYearModel")
 
 
 const creatYears=async(req,res)=>

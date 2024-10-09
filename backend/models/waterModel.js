@@ -11,8 +11,8 @@ const waterModel = new mongoose.Schema({
     required: true,
   },
   fyear: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "year",
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"year"
   },
   units: {
     type: Number,

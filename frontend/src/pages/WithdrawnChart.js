@@ -19,13 +19,40 @@ ChartJS.register(
   Legend
 );
 
-const WithDrawnChart = ({ wdata }) => {
+const WithDrawnChart = ({ wdata, fyear }) => {
+
+  
+  
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
   useEffect(() => {
+    if (!fyear || fyear.length === 0) {
+      console.log("No fiscal years selected, clearing chart");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
+
     if (!wdata || wdata.length === 0) {
       console.log("No data found");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
+
+    const selectedfyear = fyear.map((f) => f.value); 
+
+    const filteredData = wdata.filter(
+      (item) =>
+        item.status === "withdrawn" && 
+        selectedfyear.includes(item.fyear.fiscalyear) 
+    );
+
+ console.log(filteredData);
+ 
+    if (filteredData.length === 0) {
+      console.log("No matching withdrawn data for selected fiscal years");
       setElables([]);
       setDatasets([]);
       return;
@@ -34,35 +61,37 @@ const WithDrawnChart = ({ wdata }) => {
     const labelSet = new Set();
     const unitsMap = {};
 
-    wdata.forEach((item) => {
-      if (typeof item === "object" && item.status === "withdrawn") {
-        const { type, units } = item;
-        labelSet.add(type);
-
-        if (!unitsMap[type]) {
-          unitsMap[type] = 0;
-        }
-
-        unitsMap[type] += units;
-      } else {
-        console.warn("Invalid data format:", item);
-      }
+  
+    selectedfyear.forEach((year) => {
+      unitsMap[year] = {};
     });
 
-    const labelsArray = Array.from(labelSet);
+    filteredData.forEach((item) => {
+      const { type, units, fyear } = item; 
+      labelSet.add(type); 
+  
 
-    const tempDatasets = [
-      {
-        label: "Withdrawn Units",
-        data: labelsArray.map((label) => unitsMap[label] || 0),
-        backgroundColor: labelsArray.map(() => `rgb(85, 61, 233)`),
-        borderColor: labelsArray.map(() => `rgb(85, 61, 233)`),
-      },
-    ];
+      if (!unitsMap[fyear.fiscalyear][type]) {
+        unitsMap[fyear.fiscalyear][type] = 0;
+      }
+      unitsMap[fyear.fiscalyear][type] += units; 
+    });
 
-    setElables(labelsArray);
-    setDatasets(tempDatasets);
-  }, [wdata]);
+    const labelsArray = Array.from(labelSet); 
+
+  
+    const tempDatasets = selectedfyear.map((year) => {
+      return {
+        label: year,
+        data: labelsArray.map((label) => unitsMap[year][label] || 0), 
+        backgroundColor: `rgba(85, 61, 233, ${0.5 + Math.random() * 0.5})`, 
+        borderColor: `rgba(85, 61, 233, 1)`,
+      };
+    });
+
+    setElables(labelsArray); 
+    setDatasets(tempDatasets); 
+  }, [wdata, fyear]);
 
   const data = {
     labels: elabels,
@@ -86,23 +115,21 @@ const WithDrawnChart = ({ wdata }) => {
     },
     plugins: {
       legend: {
-        display: false,
+        display: true, 
         position: "top",
       },
-      datalabels: {
-        display: false,
+      datalabels:
+      {
+        display:false
       },
       title: {
         display: true,
-        text: "Withdrawn Units",
+        text: "Withdrawn Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",
         },
         position: "bottom",
-      },
-      datadatalabels: {
-        display: false,
       },
     },
   };

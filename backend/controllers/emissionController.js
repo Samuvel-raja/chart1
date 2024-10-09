@@ -29,7 +29,6 @@ const createEmission = async (req, res) => {
     const token = req.cookies.token;
     
     const userData = await userModel.findOne({ token });
-    console.log(userData);
     
     const userOrganizationId = userData.organization;
 

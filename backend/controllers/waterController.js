@@ -1,43 +1,44 @@
 const userModel = require("../models/userModel");
 const waterModel = require("../models/waterModel");
-const yearModel = require("../models/yearsWaterModel");
+const yearModel = require("../models/fiscalYearModel");
 
-const transformData = (data, fyear, organizationId) => {
+const transformData = (data, organizationId, fiscalId) => {
   return data.map((item) => {
-    // Extract the CSV-like string from the item
     const value = Object.values(item)[0];
 
-    // Split the value string into respective fields
-    const [start_date, end_date, units, type, status] = value.split(",");
+    const [start_date, end_date, fyear, units, type, status] = value.split(",");
 
-    // Create and return the transformed object
     return {
       start_date: start_date.trim(),
       end_date: end_date.trim(),
       units: parseInt(units.trim(), 10),
       type: type.trim(),
       status: status.trim(),
-      fyear,
+      fyear: fiscalId,
       organization: organizationId,
     };
   });
 };
-
-
-
 
 const createWater = async (req, res) => {
   const token = req.cookies.token;
   const user = await userModel.findOne({ token });
   const organization = user.organization;
 
-  const fyear = await yearModel.findOne({ organization });
-console.log(req.body);
+  const { wdata, SelectedOption } = req.body;
+  const fyearvalue = SelectedOption.value;
 
   try {
-    const transformeddata = transformData(req.body, fyear._id, organization);
+    let fiscaldata;
+    try {
+       fiscaldata = new yearModel({ fiscalyear:fyearvalue, organization });
+      await fiscaldata.save();
+      
+    } catch (err) {
+      return res.status(404).send({mess:"fiscal year not created",err});
+    }
 
-    console.log(transformeddata);
+    const transformeddata = transformData(wdata, organization, fiscaldata._id);
 
     const newwater = await waterModel.insertMany(transformeddata);
     return res

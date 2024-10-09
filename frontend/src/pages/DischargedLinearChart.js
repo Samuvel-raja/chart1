@@ -9,132 +9,162 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import '../styles/waterChart.css';
 
-ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const DischargedLineChart = ({ wdata }) => {
-  const [labels, setLabels] = useState([]);
+const DischargedLinearChart = ({ wdata, fyear }) => {
+  const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
   useEffect(() => {
-    if (!wdata || wdata.length === 0) {
-      console.log("No data found");
-      setLabels([]);
+    if (!fyear || fyear.length === 0) {
+      console.log("No fiscal years selected, clearing chart");
+      setElables([]);
       setDatasets([]);
       return;
     }
 
+    if (!wdata || wdata.length === 0) {
+      console.log("No data found");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
 
-    const convertToDate = (dateString) => {
-      const [day, month, year] = dateString.split("-");
-      return new Date(`${year}-${month}-${day}`);
-    };
+    const selectedfyear = fyear.map((f) => f.value);
 
- 
-    const monthUnitsMap = {};
-
-    const filteredData = wdata.filter(item => 
-      typeof item === "object" &&
-      item.start_date &&
-      item.end_date &&
-      item.units &&
-      item.status === "discharged"
+    const filteredData = wdata.filter(
+      (item) =>
+        item.status === "discharged" &&
+        selectedfyear.includes(item.fyear.fiscalyear)
     );
 
+    if (filteredData.length === 0) {
+      console.log("No matching discharged data for selected fiscal years");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
+
+    const monthUnitsMap = {};
+
+    const getMonthName = (dateString) => {
+      const [year, month] = dateString.split("-");
+      return new Date(year, month - 1).toLocaleString("default", {
+        month: "long",
+      });
+    };
+
+    selectedfyear.forEach((year) => {
+      monthUnitsMap[year] = {};
+    });
+
     filteredData.forEach((item) => {
-      const startDate = convertToDate(item.start_date);
-      const endDate = convertToDate(item.end_date);
+      const startMonth = getMonthName(item.start_date);
+      const endMonth = getMonthName(item.end_date);
+      const year = item.fyear.fiscalyear;
 
- 
-      let currentDate = new Date(startDate);
-      while (currentDate <= endDate) {
-        const monthKey = currentDate.toLocaleString("default", { month: "long" });
+      if (!monthUnitsMap[year][startMonth]) {
+        monthUnitsMap[year][startMonth] = 0;
+      }
+      if (!monthUnitsMap[year][endMonth]) {
+        monthUnitsMap[year][endMonth] = 0;
+      }
 
-     
-        if (!monthUnitsMap[monthKey]) {
-          monthUnitsMap[monthKey] = 0;
-        }
-
- 
-        monthUnitsMap[monthKey] += item.units;
-
-  
-        currentDate.setMonth(currentDate.getMonth() + 1);
+      monthUnitsMap[year][startMonth] += item.units;
+      if (startMonth !== endMonth) {
+        monthUnitsMap[year][endMonth] += item.units;
       }
     });
 
+    const allMonths = new Set();
+    Object.keys(monthUnitsMap).forEach((year) => {
+      Object.keys(monthUnitsMap[year]).forEach((month) => {
+        allMonths.add(month);
+      });
+    });
+    const labelsArray = Array.from(allMonths);
 
-    const labelsArray = Object.keys(monthUnitsMap).sort((a, b) => 
-      new Date(Date.parse(a + " 1, 2020")) - new Date(Date.parse(b + " 1, 2020"))
-    ); 
-    const dataValues = labelsArray.map((label) => monthUnitsMap[label]);
+    const backgroundColors = ["rgb(59, 130, 246)", "rgb(205, 213, 223)"];
 
-
-    const tempDatasets = [
-      {
-        label: "Withdrawn Units",
+    const tempDatasets = selectedfyear.map((year, index) => {
+      const dataValues = labelsArray.map(
+        (month) => monthUnitsMap[year][month] || 0
+      );
+      return {
+        label: `Fiscal Year ${year}`,
         data: dataValues,
         fill: false,
-        backgroundColor: "rgb(85, 61, 233)",
-        borderColor: "rgb(85, 61, 233)",
-      },
-    ];
+        backgroundColor: backgroundColors[index % 2],
+        borderColor: backgroundColors[index % 2],
+        tension: 0.2,
+      };
+    });
 
-    setLabels(labelsArray);
+    setElables(labelsArray);
     setDatasets(tempDatasets);
-  }, [wdata]);
+  }, [wdata, fyear]);
 
   const data = {
-    labels: labels, 
-    datasets: datasets, 
+    labels: elabels,
+    datasets: datasets,
   };
 
   const options = {
     scales: {
       x: {
+        beginAtZero: true,
         title: {
           display: true,
           text: "Month",
         },
         grid: {
-          display: false,
+          display: true,
         },
       },
       y: {
-        beginAtZero: true,
         title: {
           display: true,
-          text: "Discharged Units",
+          text: "Withdrawn Units",
+        },
+        beginAtZero: true,
+        grid: {
+          display: true,
         },
       },
     },
-  
     plugins: {
       legend: {
-        display: false,
+        display: true,
         position: "top",
       },
       datalabels: {
-        display: false, 
+        display: false,
       },
       title: {
-        display: false,
-        text: "Withdrawn Units per Month",
+        display: true,
+        text: "Discharged Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",
         },
+        position: "bottom",
       },
     },
   };
-  
 
   return (
-    <div className="water-bar-chart">
-      <Line data={data} options={options} height={500} width={900} />
+    <div>
+      <Line data={data} options={options} height={250} width={450} />
     </div>
   );
 };
 
-export default DischargedLineChart;
+export default DischargedLinearChart;

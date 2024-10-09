@@ -10,15 +10,45 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const ReCycledChart = ({ wdata }) => {
+const RecycledChart = ({ wdata, fyear }) => {
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
   useEffect(() => {
+    if (!fyear || fyear.length === 0) {
+      console.log("No fiscal years selected, clearing chart");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
+
     if (!wdata || wdata.length === 0) {
       console.log("No data found");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
+
+    const selectedfyear = fyear.map((f) => f.value); 
+
+    const filteredData = wdata.filter(
+      (item) =>
+        item.status === "recycled" && 
+        selectedfyear.includes(item.fyear.fiscalyear) 
+    );
+
+    // console.log("Filtered Data:", filteredData);
+    if (filteredData.length === 0) {
+      console.log("No matching consumed data for selected fiscal years");
       setElables([]);
       setDatasets([]);
       return;
@@ -27,36 +57,37 @@ const ReCycledChart = ({ wdata }) => {
     const labelSet = new Set();
     const unitsMap = {};
 
- 
-    wdata.forEach((item) => {
-      if (typeof item === "object" && item.status === "recycled") {
-        const { type, units } = item;
-        labelSet.add(type);
-
-        if (!unitsMap[type]) {
-          unitsMap[type] = 0;
-        }
-
-        unitsMap[type] += units;
-      } else {
-        console.warn("Invalid data format:", item);
-      }
+  
+    selectedfyear.forEach((year) => {
+      unitsMap[year] = {};
     });
 
-    const labelsArray = Array.from(labelSet);
+    filteredData.forEach((item) => {
+      const { type, units, fyear } = item; 
+      labelSet.add(type); 
 
-    const tempDatasets = [
-      {
-        label: "Water Units",
-        data: labelsArray.map((label) => unitsMap[label] || 0),
-        backgroundColor: labelsArray.map(() => `rgb(85, 61, 233)`),
-        borderColor: labelsArray.map(() => `rgb(85, 61, 233)`),
-      },
-    ];
 
-    setElables(labelsArray);
-    setDatasets(tempDatasets);
-  }, [wdata]);
+      if (!unitsMap[fyear.fiscalyear][type]) {
+        unitsMap[fyear.fiscalyear][type] = 0;
+      }
+      unitsMap[fyear.fiscalyear][type] += units; 
+    });
+
+    const labelsArray = Array.from(labelSet); 
+
+  
+    const tempDatasets = selectedfyear.map((year) => {
+      return {
+        label: year,
+        data: labelsArray.map((label) => unitsMap[year][label] || 0), 
+        backgroundColor: `rgba(85, 61, 233, ${0.5 + Math.random() * 0.5})`, 
+        borderColor: `rgba(85, 61, 233, 1)`,
+      };
+    });
+
+    setElables(labelsArray); 
+    setDatasets(tempDatasets); 
+  }, [wdata, fyear]);
 
   const data = {
     labels: elabels,
@@ -80,15 +111,16 @@ const ReCycledChart = ({ wdata }) => {
     },
     plugins: {
       legend: {
-        display: false,
+        display: true, 
         position: "top",
       },
-      datalabels: {
-        display: false, 
+      datalabels:
+      {
+        display:false
       },
       title: {
         display: true,
-        text: "Recycled Units",
+        text: "Recycled Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",
@@ -99,10 +131,10 @@ const ReCycledChart = ({ wdata }) => {
   };
 
   return (
-    <div className="water-bar-chart">
-      <Bar data={data} options={options} height={300} width={500}/>
+    <div>
+      <Bar data={data} options={options} height={300} width={500} />
     </div>
   );
 };
 
-export default ReCycledChart;
+export default RecycledChart;

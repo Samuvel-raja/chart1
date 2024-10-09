@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -20,11 +19,20 @@ ChartJS.register(
   Legend
 );
 
-const ConsumedChart = ({ wdata }) => {
+const ConsumedChart = ({ wdata, fyear }) => {
+
+  
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
   useEffect(() => {
+    if (!fyear || fyear.length === 0) {
+      console.log("No fiscal years selected, clearing chart");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
+
     if (!wdata || wdata.length === 0) {
       console.log("No data found");
       setElables([]);
@@ -32,43 +40,63 @@ const ConsumedChart = ({ wdata }) => {
       return;
     }
 
+    const selectedfyear = fyear.map((f) => f.value); 
+
+    const filteredData = wdata.filter(
+      (item) =>
+        item.status === "consumed" && 
+        selectedfyear.includes(item.fyear.fiscalyear) 
+    );
+
+    
+    if (filteredData.length === 0) {
+      console.log("No matching consumed data for selected fiscal years");
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
+
+    
     const labelSet = new Set();
     const unitsMap = {};
 
-    wdata.forEach((item) => {
-      if (typeof item === "object" && item.status === "consumed") {
-        const { type, units } = item;
-        labelSet.add(type);
-
-        if (!unitsMap[type]) {
-          unitsMap[type] = 0;
-        }
-
-        unitsMap[type] += units;
-      } else {
-        console.warn("Invalid data format:", item);
-      }
+  
+    selectedfyear.forEach((year) => {
+      unitsMap[year] = {};
     });
 
-    const labelsArray = Array.from(labelSet);
+    filteredData.forEach((item) => {
+      const { type, units, fyear } = item; 
+      labelSet.add(type); 
 
-    const tempDatasets = [
-      {
-        label: "Consumed Units",
-        data: labelsArray.map((label) => unitsMap[label] || 0),
-        backgroundColor: labelsArray.map(() => `rgb(85, 61, 233)`),
-        borderColor: labelsArray.map(() => `rgb(85, 61, 233)`),
-      },
-    ];
 
-    setElables(labelsArray);
-    setDatasets(tempDatasets);
-  }, [wdata]);
+      if (!unitsMap[fyear.fiscalyear][type]) {
+        unitsMap[fyear.fiscalyear][type] = 0;
+      }
+      unitsMap[fyear.fiscalyear][type] += units; 
+    });
+
+    const labelsArray = Array.from(labelSet); 
+
+  
+    const tempDatasets = selectedfyear.map((year) => {
+      return {
+        label: year,
+        data: labelsArray.map((label) => unitsMap[year][label] || 0), 
+        backgroundColor: `rgba(85, 61, 233, ${0.5 + Math.random() * 0.5})`, 
+        borderColor: `rgba(85, 61, 233, 1)`,
+      };
+    });
+
+    setElables(labelsArray); 
+    setDatasets(tempDatasets); 
+  }, [wdata, fyear]);
 
   const data = {
     labels: elabels,
     datasets: datasets,
   };
+
 
   const options = {
     indexAxis: "y",
@@ -87,30 +115,28 @@ const ConsumedChart = ({ wdata }) => {
     },
     plugins: {
       legend: {
-        display: false,
+        display: true, 
         position: "top",
       },
-      datalabels: {
-        display: false,
+      datalabels:
+      {
+        display:false
       },
       title: {
         display: true,
-        text: "Consumed Units",
+        text: "Consumed Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",
         },
         position: "bottom",
       },
-      datadatalabels: {
-        display: false,
-      },
     },
   };
 
   return (
-    <div className="water-bar-chart">
-      <Bar data={data} options={options} height={500} width={900} />
+    <div>
+      <Bar data={data} options={options} height={300} width={500} />
     </div>
   );
 };

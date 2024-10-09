@@ -8,7 +8,6 @@ import {
   Filler,
   Tooltip,
   Legend,
-  plugins,
 } from "chart.js";
 
 ChartJS.register(
@@ -105,7 +104,7 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
   };
 
   return (
-    <div style={{ width: "80%" }}>
+    <div style={{ width: "80%" ,height:"90%"}}>
       {labels.length > 0 ? (
         <Line data={chartData} options={options} />
       ) : (
