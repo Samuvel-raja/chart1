@@ -1,10 +1,10 @@
 const { default: mongoose } = require("mongoose");
 const emissionModel = require("../models/emissionModel");
 const userModel = require("../models/userModel");
-
-const transformData = (data, id) => {
+const yearModel = require("../models/fiscalYearModel");
+const transformData = (data, fid, id) => {
   return data.map((item) => {
-    const [start_date, end_date, fyear, description, emissions, type, scope] =
+    const [start_date, end_date,fyear, description, emissions, type, scope] =
       item["start_date,end_date,fyear,description,emissions,type,scope"].split(
         ","
       );
@@ -14,9 +14,9 @@ const transformData = (data, id) => {
     return {
       start_date,
       end_date,
-      fyear,
+      fyear: fid,
       description,
-      emissions,
+      emissions:Number(emissions),
       type,
       scope: modifiedScope,
       organization: id,
@@ -25,21 +25,38 @@ const transformData = (data, id) => {
 };
 
 const createEmission = async (req, res) => {
+  const { data, SelectedOption } = req.body;
+
   try {
     const token = req.cookies.token;
-    
-    const userData = await userModel.findOne({ token });
-    
-    const userOrganizationId = userData.organization;
 
-    const transformedData = await transformData(req.body, userOrganizationId);
+    const userData = await userModel.findOne({ token });
+
+    const userOrganizationId = userData.organization;
+    const fyear = SelectedOption.value;
+
+    let fyeardata;
+    try {
+      fyeardata = new yearModel({ fiscalyear: fyear, userOrganizationId });
+      await fyeardata.save();
+    } catch (err) {
+      return res.status(404).send(err);
+    }
+ 
+
+    const transformedData = await transformData(
+      data,
+      fyeardata._id,
+      userOrganizationId
+    );
+    
     const newEmission = await emissionModel.insertMany(transformedData);
 
     return res
       .status(200)
       .send({ message: "Emission created successfully", newEmission });
   } catch (err) {
-    return res.status(400).send(err.message);
+    return res.status(400).send(err);
   }
 };
 
@@ -55,7 +72,7 @@ const deleteAllEmission = async (req, res) => {
 };
 const getAllEmissions = async (req, res) => {
   try {
-    const allemissions = await emissionModel.find().populate("organization");
+    const allemissions = await emissionModel.find().populate("organization").populate("fyear");
     return res.status(200).send(allemissions);
   } catch (err) {
     return res.status(404).send({ message: err.message });

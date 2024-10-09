@@ -47,9 +47,9 @@ const BarChart = ({ eData, fyears }) => {
       eData.forEach((val) => {
         if (Array.isArray(val)) {
           val.forEach((item) => {
-            labelSet.add(item.fyear); 
+            labelSet.add(item.fyear.fiscalyear); 
 
-            if (item.fyear === flabel) {
+            if (item.fyear.fiscalyear === flabel) {
             
               if (item.scope.trim() === "scope1") {
                 scopeData.Scope1.push(item.emissions);

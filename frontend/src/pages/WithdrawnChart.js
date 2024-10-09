@@ -49,7 +49,7 @@ const WithDrawnChart = ({ wdata, fyear }) => {
         selectedfyear.includes(item.fyear.fiscalyear) 
     );
 
- console.log(filteredData);
+//  console.log(filteredData);
  
     if (filteredData.length === 0) {
       console.log("No matching withdrawn data for selected fiscal years");

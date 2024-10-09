@@ -20,8 +20,8 @@ ChartJS.register(
 );
 
 const LineChart = ({ eData = [[]], fyears = [] }) => {
-  console.log("Input eData:", eData);
-  console.log("Selected Fiscal Years:", fyears);
+  // console.log("Input eData:", eData);
+  // console.log("Selected Fiscal Years:", fyears);
 
   const actualData = eData[0] || [];
 
@@ -37,7 +37,7 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
 
   if (actualData.length > 0) {
     actualData.forEach((item) => {
-      const fiscalYear = item.fyear;
+      const fiscalYear = item.fyear.fiscalyear;
 
       const fiscalYearIndex = fyears.findIndex(
         (year) => year.value === fiscalYear
@@ -68,8 +68,8 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
     console.warn("No data available in actualData");
   }
 
-  console.log("Generated Labels:", labels);
-  console.log("Datasets:", datasets);
+  // console.log("Generated Labels:", labels);
+  // console.log("Datasets:", datasets);
 
   const chartData = {
     labels,
@@ -94,7 +94,6 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
           display: false,
         },
       },
-    
     },
     plugins: {
       datalabels: {
@@ -104,7 +103,7 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
   };
 
   return (
-    <div style={{ width: "80%" ,height:"90%"}}>
+    <div style={{ width: "80%", height: "90%" }}>
       {labels.length > 0 ? (
         <Line data={chartData} options={options} />
       ) : (

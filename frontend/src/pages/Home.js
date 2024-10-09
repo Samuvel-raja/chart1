@@ -32,7 +32,7 @@ const Home = () => {
   {
     e.preventDefault();
     try {
-      await postEmissionApi(data);
+      await postEmissionApi({data,SelectedOption});
     } catch (error) {
        console.log(error);
        
@@ -114,8 +114,8 @@ const Home = () => {
     
       <input type="file" accept=".csv" onChange={handleChange1} />
       <button onClick={handleSubmit1}>Click</button>
-      <input type="file" accept=".csv" onChange={handleChange2} />
-      <button onClick={handleSubmit2}>Click</button>
+      {/* <input type="file" accept=".csv" onChange={handleChange2} />
+      <button onClick={handleSubmit2}>Click</button> */}
     </>
   );
 };

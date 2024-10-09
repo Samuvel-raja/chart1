@@ -22,7 +22,7 @@ const Emission = () => {
     setSelectedOption(e);
   };
   const fyears = new Set();
-  edata.map((item) => item.map((val) => fyears.add(val.fyear)));
+  edata.map((item) => item.map((val) => fyears.add(val.fyear.fiscalyear)));
 
   const options = Array.from(fyears).map((val) => ({
     value: val,

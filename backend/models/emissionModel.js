@@ -10,7 +10,8 @@ const emissionModel = new mongoose.Schema({
   },
   fyear:
   {
-    type:String
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"year"
   },
   description: {
     type: String,

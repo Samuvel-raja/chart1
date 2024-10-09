@@ -41,14 +41,17 @@ const HorizontalBarChart = ({ edata, fyears }) => {
       return;
     }
 
+
     fyears.forEach((fyear) => {
       const emissions = [];
-      const flabel = typeof fyear === "object" ? fyear.label : fyear;
+      const flabel =
+        typeof fyear === "object" ? fyear.label : fyear;
 
       edata.forEach((val) => {
         if (Array.isArray(val)) {
           val.forEach((item) => {
-            if (item.fyear === flabel) {
+            
+            if (item.fyear.fiscalyear=== flabel) {
               labelSet.add(item.type);
               emissions.push(item.emissions);
             }
