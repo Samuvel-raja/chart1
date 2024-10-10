@@ -3,12 +3,15 @@ import Papa from "papaparse";
 import { postEmissionApi } from "../apicalls/emissionApi";
 import { postWaterApi } from "../apicalls/waterApi";
 import Select from "react-select";
+import { postWastesApi } from "../apicalls/wastesApi";
 
 
 
 const Home = () => {
   const [data, setData] = useState([]);
   const[wdata,setwdata]=useState([]);
+  const[wtdata,setwtdata]=useState([]);
+
   const [SelectedOption, setSelectedOption] = useState();
  
 
@@ -56,6 +59,22 @@ const Home = () => {
    }
  };
 
+ const handleChange3 = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+   Papa.parse(file, {
+     header: true,
+     skipEmptyLines: true,
+     complete: (results) => {
+      setwtdata(results.data);
+     },
+     error: (error) => {
+       console.error("Error parsing CSV:", error);
+     },
+   });
+ }
+};
+
 
  const handleSubmit2=async(e)=>
  {
@@ -70,10 +89,26 @@ const Home = () => {
     
  }
 
+ const handleSubmit3=async(e)=>
+  {
+     e.preventDefault();
+     try {
+       await postWastesApi({wtdata,SelectedOption});
+      
+     } catch (err) {
+        console.log(err);
+        
+     }
+     console.log(wtdata);
+     
+  }
+
 
  const handleChange = (val) => {
    setSelectedOption(val);
  };
+
+
  const options = [
   { label: "F 22-23", value: "F 22-23" },
   { label: "F 23-24", value: "F 23-24" },
@@ -116,6 +151,8 @@ const Home = () => {
       <button onClick={handleSubmit1}>Click</button>
       <input type="file" accept=".csv" onChange={handleChange2} />
       <button onClick={handleSubmit2}>Click</button>
+      <input type="file" accept=".csv" onChange={handleChange3} />
+      <button onClick={handleSubmit3}>Click</button>
     </>
   );
 };

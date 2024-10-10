@@ -136,7 +136,7 @@ const DischargedLinearChart = ({ wdata, fyear }) => {
         },
         beginAtZero: true,
         grid: {
-          display: true,
+          display: false,
         },
       },
     },

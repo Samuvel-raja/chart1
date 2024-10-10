@@ -10,6 +10,7 @@ const loginRouter = require("./routes/loginRouter");
 const homeRouter = require("./routes/HomeRouter");
 const waterRouter = require("./routes/waterRouter");
 const yearRouter = require("./routes/fiscalYearRouter");
+const wastesRouter = require("./routes/wastesRouter");
 
 require("dotenv").config();
 
@@ -30,6 +31,7 @@ app.use("/login", loginRouter);
 app.use("/home", homeRouter);
 app.use('/water',waterRouter);
 app.use('/year',yearRouter);
+app.use('/wastes',wastesRouter);
 
 mongoose
   .connect(process.env.MONGO_URL)

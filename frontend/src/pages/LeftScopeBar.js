@@ -28,6 +28,8 @@ const BarChart = ({ eData, fyears }) => {
   useEffect(() => {
     if (!eData || eData.length === 0) {
       console.log("No emission data found");
+      setElables([]);
+      setDatasets([]);
       return;
     }
     if (!fyears || fyears.length === 0) {
@@ -50,11 +52,9 @@ const BarChart = ({ eData, fyears }) => {
       eData.forEach((val) => {
         if (Array.isArray(val)) {
           val.forEach((item) => {
-          
             if (item.fyear.fiscalyear === flabel) {
               labelSet.add(flabel); 
 
-     
               if (item.scope.trim() === "scope1") {
                 scopeData.Scope1[index] += item.emissions; 
               } else if (item.scope.trim() === "scope2") {
@@ -71,7 +71,6 @@ const BarChart = ({ eData, fyears }) => {
     const uniqueFiscalYears = Array.from(labelSet); 
     setElables(uniqueFiscalYears); 
 
-  
     setDatasets([
       {
         label: "Scope 1",
@@ -93,6 +92,12 @@ const BarChart = ({ eData, fyears }) => {
       },
     ]);
   }, [eData, fyears]);
+
+
+  if (!fyears || fyears.length === 0) {
+  
+    return null;
+  }
 
   const data = {
     labels: elabels, 

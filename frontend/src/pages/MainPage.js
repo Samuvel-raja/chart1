@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Tabs, Tab, Box } from "@mui/material";
 import Emission from "./Emission";
 import Water from "./Water";
+import Wastes from "./Wastes";
 
 const MainPage = () => {
   const [nav, setnav] = useState("Emissions");
@@ -27,6 +28,7 @@ const MainPage = () => {
       </div>
       {nav === "Emissions" && <Emission />}
       {nav === "Water" && <Water />}
+      {nav==="Wastes" && <Wastes/>}
     </>
   );
 };

@@ -21,9 +21,10 @@ ChartJS.register(
   Legend
 );
 
-const DischargedLinearChart = ({ wdata, fyear }) => {
+const WithdrawnLinearChart = ({ wdata, fyear }) => {
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
+
 
   useEffect(() => {
     if (!fyear || fyear.length === 0) {
@@ -144,7 +145,7 @@ const DischargedLinearChart = ({ wdata, fyear }) => {
         },
         beginAtZero: true,
         grid: {
-          display: true,
+          display: false,
         },
       },
     },
@@ -176,4 +177,4 @@ const DischargedLinearChart = ({ wdata, fyear }) => {
   );
 };
 
-export default DischargedLinearChart;
+export default WithdrawnLinearChart;

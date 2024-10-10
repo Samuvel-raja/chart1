@@ -10,7 +10,6 @@ import {
   Legend,
 } from "chart.js";
 
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -20,7 +19,7 @@ ChartJS.register(
   Legend
 );
 
-const ReCycledLinearChart = ({ wdata, fyear }) => {
+const DisposedLinearChart = ({ wdata, fyear }) => {
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
@@ -43,7 +42,8 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
 
     const filteredData = wdata.filter(
       (item) =>
-        item.status === "recycled" && selectedfyear.includes(item.fyear.fiscalyear)
+        item.type === "disposed" &&
+        selectedfyear.includes(item.fyear.fiscalyear)
     );
 
     if (filteredData.length === 0) {
@@ -52,6 +52,7 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
       setDatasets([]);
       return;
     }
+    console.log(filteredData);
 
     const monthUnitsMap = {};
 
@@ -62,7 +63,6 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
       });
     };
 
-   
     selectedfyear.forEach((year) => {
       monthUnitsMap[year] = {};
     });
@@ -79,12 +79,11 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
         monthUnitsMap[year][endMonth] = 0;
       }
 
-      monthUnitsMap[year][startMonth] += item.units;
+      monthUnitsMap[year][startMonth] += item.quantity;
       if (startMonth !== endMonth) {
-        monthUnitsMap[year][endMonth] += item.units;
+        monthUnitsMap[year][endMonth] += item.quantity;
       }
     });
-
 
     const allMonths = new Set();
     Object.keys(monthUnitsMap).forEach((year) => {
@@ -94,22 +93,18 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
     });
     const labelsArray = Array.from(allMonths);
 
-    const backgroundColors = [
-    
-      "rgb(59, 130, 246)", 
-      "rgb(205, 213, 223)", 
-  
-    ];
+    const backgroundColors = ["rgb(59, 130, 246)", "rgb(205, 213, 223)"];
 
-  
     const tempDatasets = selectedfyear.map((year, index) => {
-      const dataValues = labelsArray.map((month) => monthUnitsMap[year][month] || 0);
+      const dataValues = labelsArray.map(
+        (month) => monthUnitsMap[year][month] || 0
+      );
       return {
         label: `Fiscal Year ${year}`,
         data: dataValues,
         fill: false,
-        backgroundColor: backgroundColors[index % 2], 
-        borderColor: backgroundColors[index % 2],     
+        backgroundColor: backgroundColors[index % 2],
+        borderColor: backgroundColors[index % 2],
         tension: 0.2,
       };
     });
@@ -122,6 +117,7 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
     labels: elabels,
     datasets: datasets,
   };
+  console.log(data);
 
   const options = {
     scales: {
@@ -151,27 +147,26 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
         display: true,
         position: "top",
       },
-      datalabels:
-      {
-        display:false
+      datalabels: {
+        display: false,
       },
       title: {
         display: true,
-        text: "Recycled Units by Fiscal Year",
+        text: "Discharged Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",
         },
-        position:"bottom"
+        position: "bottom",
       },
     },
   };
 
   return (
-    <div className="water-bar-chart">
+    <div>
       <Line data={data} options={options} height={250} width={450} />
     </div>
   );
 };
 
-export default ReCycledLinearChart;
+export default DisposedLinearChart;
