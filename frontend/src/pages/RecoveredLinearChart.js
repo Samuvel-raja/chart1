@@ -100,7 +100,7 @@ const RecoveredLinearChart = ({ wdata, fyear }) => {
         (month) => monthUnitsMap[year][month] || 0
       );
       return {
-        label: `Fiscal Year ${year}`,
+        label: year,
         data: dataValues,
         fill: false,
         backgroundColor: backgroundColors[index % 2],
@@ -152,7 +152,7 @@ const RecoveredLinearChart = ({ wdata, fyear }) => {
       },
       title: {
         display: true,
-        text: "Discharged Units by Fiscal Year",
+        text: "Recovered Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",

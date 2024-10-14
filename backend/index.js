@@ -29,9 +29,9 @@ app.use("/emission", emissionRouter);
 app.use("/user", userRouter);
 app.use("/login", loginRouter);
 app.use("/home", homeRouter);
-app.use('/water',waterRouter);
-app.use('/year',yearRouter);
-app.use('/wastes',wastesRouter);
+app.use("/water", waterRouter);
+app.use("/year", yearRouter);
+app.use("/wastes", wastesRouter);
 
 mongoose
   .connect(process.env.MONGO_URL)

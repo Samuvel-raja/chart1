@@ -10,19 +10,9 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const GeneratedChart = ({ wdata, fyear }) => {
-
-  
-  
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
@@ -41,18 +31,16 @@ const GeneratedChart = ({ wdata, fyear }) => {
       return;
     }
 
-    const selectedfyear = fyear.map((f) => f.value); 
+    const selectedfyear = fyear.map((f) => f.value); // selected fiscal years
 
     const filteredData = wdata.filter(
       (item) =>
-        item.type === "generated" && 
-        selectedfyear.includes(item.fyear.fiscalyear) 
+        item.type === "generated" &&
+        selectedfyear.includes(item.fyear.fiscalyear)
     );
 
-//  console.log(filteredData);
- 
     if (filteredData.length === 0) {
-      console.log("No matching withdrawn data for selected fiscal years");
+      console.log("No matching disposed data for selected fiscal years");
       setElables([]);
       setDatasets([]);
       return;
@@ -61,36 +49,36 @@ const GeneratedChart = ({ wdata, fyear }) => {
     const labelSet = new Set();
     const unitsMap = {};
 
-  
     selectedfyear.forEach((year) => {
       unitsMap[year] = {};
     });
 
     filteredData.forEach((item) => {
-      const { category, quantity, fyear } = item; 
-      labelSet.add(category); 
-  
+      const { category, quantity, fyear } = item;
+      labelSet.add(category);
 
       if (!unitsMap[fyear.fiscalyear][category]) {
         unitsMap[fyear.fiscalyear][category] = 0;
       }
-      unitsMap[fyear.fiscalyear][category] += quantity; 
+      unitsMap[fyear.fiscalyear][category] += quantity;
     });
 
     const labelsArray = Array.from(labelSet); 
+    const tempDatasets = selectedfyear.map((year, index) => {
+      const backgroundColor = index % 2 === 0 ?  "rgb(205, 213, 223)" : "rgb(59, 130, 246)"; 
+      const borderColor = index % 2 === 0 ? "rgb(205, 213, 223)": "rgb(59, 130, 246)"; 
 
-  
-    const tempDatasets = selectedfyear.map((year) => {
       return {
         label: year,
-        data: labelsArray.map((label) => unitsMap[year][label] || 0), 
-        backgroundColor: `rgba(85, 61, 233, ${0.5 + Math.random() * 0.5})`, 
-        borderColor: `rgba(85, 61, 233, 1)`,
+        data: labelsArray.map((label) => unitsMap[year][label] || 0),
+        backgroundColor: backgroundColor,
+        borderColor: borderColor,
+        borderWidth: 1,
       };
     });
 
-    setElables(labelsArray); 
-    setDatasets(tempDatasets); 
+    setElables(labelsArray); // Set labels for x-axis
+    setDatasets(tempDatasets); // Set datasets for chart
   }, [wdata, fyear]);
 
   const data = {
@@ -115,16 +103,15 @@ const GeneratedChart = ({ wdata, fyear }) => {
     },
     plugins: {
       legend: {
-        display: true, 
+        display: true,
         position: "top",
       },
-      datalabels:
-      {
-        display:false
+      datalabels: {
+        display: false,
       },
       title: {
         display: true,
-        text: "Withdrawn Units by Fiscal Year",
+        text: "Disposed Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",

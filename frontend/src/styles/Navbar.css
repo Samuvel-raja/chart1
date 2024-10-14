@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+  padding: 0%;
+  margin: 0%;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  padding: 10px;
+  background-color: grey;
+  align-items: center;
+}
+.nav-options {
+  display: flex;
+  gap: 20px;
+}
+.nav-options button {
+  height: 40px;
+  padding: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+}

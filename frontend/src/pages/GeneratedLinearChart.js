@@ -100,7 +100,7 @@ const GeneratedLinearChart = ({ wdata, fyear }) => {
         (month) => monthUnitsMap[year][month] || 0
       );
       return {
-        label: `Fiscal Year ${year}`,
+        label: year,
         data: dataValues,
         fill: false,
         backgroundColor: backgroundColors[index % 2],
@@ -134,7 +134,7 @@ const GeneratedLinearChart = ({ wdata, fyear }) => {
       y: {
         title: {
           display: true,
-          text: "Withdrawn Units",
+          text: "Generated Units",
         },
         beginAtZero: true,
         grid: {
@@ -152,7 +152,7 @@ const GeneratedLinearChart = ({ wdata, fyear }) => {
       },
       title: {
         display: true,
-        text: "Discharged Units by Fiscal Year",
+        text: "Generated Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",

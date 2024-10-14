@@ -99,7 +99,7 @@ const DischargedLinearChart = ({ wdata, fyear }) => {
         (month) => monthUnitsMap[year][month] || 0
       );
       return {
-        label: `Fiscal Year ${year}`,
+        label: year,
         data: dataValues,
         fill: false,
         backgroundColor: backgroundColors[index % 2],
@@ -132,7 +132,7 @@ const DischargedLinearChart = ({ wdata, fyear }) => {
       y: {
         title: {
           display: true,
-          text: "Withdrawn Units",
+          text: "Discharged Units",
         },
         beginAtZero: true,
         grid: {

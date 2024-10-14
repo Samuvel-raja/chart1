@@ -105,7 +105,7 @@ const ReCycledLinearChart = ({ wdata, fyear }) => {
     const tempDatasets = selectedfyear.map((year, index) => {
       const dataValues = labelsArray.map((month) => monthUnitsMap[year][month] || 0);
       return {
-        label: `Fiscal Year ${year}`,
+        label: year,
         data: dataValues,
         fill: false,
         backgroundColor: backgroundColors[index % 2], 

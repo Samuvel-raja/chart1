@@ -38,12 +38,12 @@ const RecycledChart = ({ wdata, fyear }) => {
       return;
     }
 
-    const selectedfyear = fyear.map((f) => f.value); 
+    const selectedfyear = fyear.map((f) => f.value);
 
     const filteredData = wdata.filter(
       (item) =>
-        item.status === "recycled" && 
-        selectedfyear.includes(item.fyear.fiscalyear) 
+        item.status === "recycled" &&
+        selectedfyear.includes(item.fyear.fiscalyear)
     );
 
     // console.log("Filtered Data:", filteredData);
@@ -57,36 +57,35 @@ const RecycledChart = ({ wdata, fyear }) => {
     const labelSet = new Set();
     const unitsMap = {};
 
-  
     selectedfyear.forEach((year) => {
       unitsMap[year] = {};
     });
 
     filteredData.forEach((item) => {
-      const { type, units, fyear } = item; 
-      labelSet.add(type); 
-
+      const { type, units, fyear } = item;
+      labelSet.add(type);
 
       if (!unitsMap[fyear.fiscalyear][type]) {
         unitsMap[fyear.fiscalyear][type] = 0;
       }
-      unitsMap[fyear.fiscalyear][type] += units; 
+      unitsMap[fyear.fiscalyear][type] += units;
     });
 
-    const labelsArray = Array.from(labelSet); 
+    const labelsArray = Array.from(labelSet);
 
-  
-    const tempDatasets = selectedfyear.map((year) => {
+    const backgroundColors = ["rgb(59, 130, 246)", "rgb(205, 213, 223)"];
+
+    const tempDatasets = selectedfyear.map((year, index) => {
       return {
         label: year,
-        data: labelsArray.map((label) => unitsMap[year][label] || 0), 
-        backgroundColor: `rgba(85, 61, 233, ${0.5 + Math.random() * 0.5})`, 
-        borderColor: `rgba(85, 61, 233, 1)`,
+        data: labelsArray.map((label) => unitsMap[year][label] || 0),
+        backgroundColor: backgroundColors[index % 2],
+        borderColor: backgroundColors[index % 2],
       };
     });
 
-    setElables(labelsArray); 
-    setDatasets(tempDatasets); 
+    setElables(labelsArray);
+    setDatasets(tempDatasets);
   }, [wdata, fyear]);
 
   const data = {
@@ -111,12 +110,11 @@ const RecycledChart = ({ wdata, fyear }) => {
     },
     plugins: {
       legend: {
-        display: true, 
+        display: true,
         position: "top",
       },
-      datalabels:
-      {
-        display:false
+      datalabels: {
+        display: false,
       },
       title: {
         display: true,

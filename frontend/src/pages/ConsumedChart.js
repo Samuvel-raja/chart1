@@ -78,13 +78,15 @@ const ConsumedChart = ({ wdata, fyear }) => {
 
     const labelsArray = Array.from(labelSet); 
 
+    const backgroundColors = ["rgb(59, 130, 246)", "rgb(205, 213, 223)"];
+
   
-    const tempDatasets = selectedfyear.map((year) => {
+    const tempDatasets = selectedfyear.map((year,index) => {
       return {
         label: year,
         data: labelsArray.map((label) => unitsMap[year][label] || 0), 
-        backgroundColor: `rgba(85, 61, 233, ${0.5 + Math.random() * 0.5})`, 
-        borderColor: `rgba(85, 61, 233, 1)`,
+        backgroundColor:backgroundColors[index%2] , 
+        borderColor: backgroundColors[index%2]
       };
     });
 

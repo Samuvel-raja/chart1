@@ -7,15 +7,19 @@ import "./App.css";
 import Water from "./pages/Water";
 import MainPage from "./pages/MainPage";
 import Wastes from "./pages/Wastes";
+import Navbar from "./pages/Navbar";
+import { useState } from "react";
 
 function App() {
+  const [navopt, setnavopt] = useState("uploads");
   return (
     <>
+      <Navbar setnavopt={setnavopt}  />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<Home navopt={navopt} />} />
         <Route path="/emission" element={<Emission />} />
         <Route path="/water" element={<Water />} />
         <Route path="/wastes" element={<Wastes />} />

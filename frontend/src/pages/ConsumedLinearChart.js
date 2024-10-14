@@ -97,7 +97,7 @@ const ConsumedLinearChart = ({ wdata, fyear }) => {
         (month) => monthUnitsMap[year][month] || 0
       );
       return {
-        label: `Fiscal Year ${year}`,
+        label: year,
         data: dataValues,
         fill: false,
         backgroundColor: backgroundColors[index % 2],

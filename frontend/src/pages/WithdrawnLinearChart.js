@@ -94,6 +94,8 @@ const WithdrawnLinearChart = ({ wdata, fyear }) => {
         allMonths.add(month);
       });
     });
+
+    Object.values(monthUnitsMap).forEach((month)=>allMonths.add(month))
     const labelsArray = Array.from(allMonths);
 
  
@@ -108,7 +110,7 @@ const WithdrawnLinearChart = ({ wdata, fyear }) => {
     const tempDatasets = selectedfyear.map((year, index) => {
       const dataValues = labelsArray.map((month) => monthUnitsMap[year][month] || 0);
       return {
-        label: `Fiscal Year ${year}`,
+        label: year,
         data: dataValues,
         fill: false,
         backgroundColor: backgroundColors[index % 2], 
