@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const userSchema = require("../models/userModel");
-const bcrypt=require('bcrypt');
+const bcrypt = require("bcrypt");
+const userModel = require("../models/userModel");
 
 const createUser = async (req, res) => {
   const { username, email, password, organization, role } = req.body;
@@ -14,18 +15,6 @@ const createUser = async (req, res) => {
       organization,
       role,
     });
-
-    // const claims = {
-    //   sub: newuser._id,
-    //   username: newuser.username,
-    //   role: newuser.role,
-    // };
-    // if (req.body.password === confirmpassword) {
-    //   const token = njwt.create(claims, process.env.SECRET_KEY);
-    //   res.cookie("token", token.compact());
-    // } else {
-    //   return res.send({ message: "Passwords do not match" });
-    // }
 
     await newuser.save();
     return res.status(201).send({
@@ -70,4 +59,15 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { createUser, updateUser, getAllUsers, deleteUser };
+const findUser = async (req, res) => {
+  const token = req.cookies.token;
+
+  try {
+    const user = await userModel.findOne({ token }).populate("organization");
+
+    return res.status(200).send(user);
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
+module.exports = { createUser, updateUser, getAllUsers, deleteUser, findUser };

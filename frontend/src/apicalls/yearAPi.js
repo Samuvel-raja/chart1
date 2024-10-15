@@ -1,8 +1,7 @@
-import { ADD_YEAR_URL } from "../apiUrls/yearApiUrl";
+import { ADD_YEAR_URL, DELETE_YEAR_URL } from "../apiUrls/yearApiUrl";
 import axios from "axios";
 
 const postYearApi = (data) => {
-
   return axios({
     method: "POST",
     data: data,
@@ -10,12 +9,19 @@ const postYearApi = (data) => {
   });
 };
 
-const getAllYearsApi = (data) => {
+const getAllYearsApi = () => {
+  return axios({
+    method: "GET",
+    url: ADD_YEAR_URL,
+  });
+};
 
-    return axios({
-      method: "GET",
-      url: ADD_YEAR_URL,
-    });
-  };
+const deleteYear = (id) => {
+  
+  return axios({
+    method: "DELETE",
+    url: `${DELETE_YEAR_URL}/${id}`,
+  });
+};
 
-export { postYearApi ,getAllYearsApi};
+export { postYearApi, getAllYearsApi, deleteYear };

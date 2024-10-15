@@ -33,6 +33,8 @@ const Wastes = () => {
 
   const fyears = new Set();
 
+  // console.log(wtdata);
+  
   if (Array.isArray(wtdata)) {
     wtdata.forEach((item) => {
       if (item.fyear) {

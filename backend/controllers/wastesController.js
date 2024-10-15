@@ -28,17 +28,23 @@ const createWaste = async (req, res) => {
 
   const { wtdata, SelectedOption } = req.body;
   const fyearvalue = SelectedOption.value;
-  let fiscaldata;
+
+  const existYear = await fiscalYearModel.findOne({ fiscalyear: fyearvalue });
+
   try {
-    try {
-      fiscaldata = new fiscalYearModel({ fiscalyear: fyearvalue, organization });
-      await fiscaldata.save();
-    } catch (err) {
-      return res.status(404).send({ mess: "fiscal year not created", err });
+    let fiscaldata = existYear;
+
+    if (!existYear) {
+      try {
+        fiscaldata = new fiscalYearModel({ fiscalyear: fyearvalue, organization });
+        await fiscaldata.save();
+      } catch (err) {
+        return res.status(404).send({ mess: "fiscal year not created", err });
+      }
     }
 
     const transformeddata = transformData(wtdata, organization, fiscaldata._id);
-// console.log(transformeddata);
+
 
     const newwaste = await wasteModel.insertMany(transformeddata);
     return res.status(201).send(newwaste);

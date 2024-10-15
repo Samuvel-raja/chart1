@@ -20,9 +20,6 @@ ChartJS.register(
 );
 
 const LineChart = ({ eData = [[]], fyears = [] }) => {
-  // console.log("Input eData:", eData);
-  // console.log("Selected Fiscal Years:", fyears);
-
   const actualData = eData[0] || [];
 
   const labels = [];
@@ -37,39 +34,40 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
 
   if (actualData.length > 0) {
     actualData.forEach((item) => {
-      const fiscalYear = item.fyear.fiscalyear;
+      // Ensure that item.fyear and item.fyear.fiscalyear exist
+      const fiscalYear = item.fyear && item.fyear.fiscalyear ? item.fyear.fiscalyear : "";
 
-      const fiscalYearIndex = fyears.findIndex(
-        (year) => year.value === fiscalYear
-      );
-      if (fiscalYearIndex !== -1) {
-        const startDate = new Date(item.start_date);
-        const endDate = new Date(item.end_date);
+      if (fiscalYear) {
+        const fiscalYearIndex = fyears.findIndex(
+          (year) => year.value === fiscalYear
+        );
 
-        while (startDate <= endDate) {
-          const month = startDate.toLocaleString("default", { month: "short" });
+        if (fiscalYearIndex !== -1) {
+          const startDate = new Date(item.start_date);
+          const endDate = new Date(item.end_date);
 
-          const labelIndex = labels.indexOf(month);
-          if (labelIndex === -1) {
-            labels.push(month);
+          while (startDate <= endDate) {
+            const month = startDate.toLocaleString("default", { month: "short" });
 
-            datasets.forEach((dataset, index) => {
-              dataset.data.push(index === fiscalYearIndex ? item.emissions : 0);
-            });
-          } else {
-            datasets[fiscalYearIndex].data[labelIndex] += item.emissions;
+            const labelIndex = labels.indexOf(month);
+            if (labelIndex === -1) {
+              labels.push(month);
+
+              datasets.forEach((dataset, index) => {
+                dataset.data.push(index === fiscalYearIndex ? item.emissions : 0);
+              });
+            } else {
+              datasets[fiscalYearIndex].data[labelIndex] += item.emissions;
+            }
+
+            startDate.setMonth(startDate.getMonth() + 1);
           }
-
-          startDate.setMonth(startDate.getMonth() + 1);
         }
       }
     });
   } else {
     console.warn("No data available in actualData");
   }
-
-  // console.log("Generated Labels:", labels);
-  // console.log("Datasets:", datasets);
 
   const chartData = {
     labels,
@@ -106,7 +104,9 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
     <div style={{ width: "80%", height: "90%" }}>
       {labels.length > 0 ? (
         <Line data={chartData} options={options} />
-      ) :""}
+      ) : (
+        <p>No data to display</p>
+      )}
     </div>
   );
 };

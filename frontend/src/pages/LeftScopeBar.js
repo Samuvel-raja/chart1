@@ -39,28 +39,29 @@ const BarChart = ({ eData, fyears }) => {
       return;
     }
 
-    const labelSet = new Set(); 
+    const labelSet = new Set();
     const scopeData = {
       Scope1: Array(fyears.length).fill(0),
       Scope2: Array(fyears.length).fill(0),
       Scope3: Array(fyears.length).fill(0),
-    }; 
+    };
 
     fyears.forEach((fyear, index) => {
-      const flabel = typeof fyear === "object" ? fyear.label : fyear; 
+      const flabel = typeof fyear === "object" ? fyear.label : fyear;
 
       eData.forEach((val) => {
         if (Array.isArray(val)) {
           val.forEach((item) => {
-            if (item.fyear.fiscalyear === flabel) {
-              labelSet.add(flabel); 
+            // Ensure item.fyear exists and is valid before accessing item.fyear.fiscalyear
+            if (item.fyear && item.fyear.fiscalyear === flabel) {
+              labelSet.add(flabel);
 
               if (item.scope.trim() === "scope1") {
-                scopeData.Scope1[index] += item.emissions; 
+                scopeData.Scope1[index] += item.emissions;
               } else if (item.scope.trim() === "scope2") {
-                scopeData.Scope2[index] += item.emissions; 
+                scopeData.Scope2[index] += item.emissions;
               } else if (item.scope.trim() === "scope3") {
-                scopeData.Scope3[index] += item.emissions; 
+                scopeData.Scope3[index] += item.emissions;
               }
             }
           });
@@ -68,8 +69,8 @@ const BarChart = ({ eData, fyears }) => {
       });
     });
 
-    const uniqueFiscalYears = Array.from(labelSet); 
-    setElables(uniqueFiscalYears); 
+    const uniqueFiscalYears = Array.from(labelSet);
+    setElables(uniqueFiscalYears);
 
     setDatasets([
       {
@@ -93,15 +94,13 @@ const BarChart = ({ eData, fyears }) => {
     ]);
   }, [eData, fyears]);
 
-
   if (!fyears || fyears.length === 0) {
-  
     return null;
   }
 
   const data = {
-    labels: elabels, 
-    datasets: datasets, 
+    labels: elabels,
+    datasets: datasets,
   };
 
   const options = {
@@ -128,11 +127,11 @@ const BarChart = ({ eData, fyears }) => {
     },
     scales: {
       x: {
-        stacked: true, 
+        stacked: true,
       },
       y: {
-        stacked: true, 
-        beginAtZero: true, 
+        stacked: true,
+        beginAtZero: true,
       },
     },
   };

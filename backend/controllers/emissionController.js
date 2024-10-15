@@ -1,10 +1,10 @@
 const { default: mongoose } = require("mongoose");
 const emissionModel = require("../models/emissionModel");
 const userModel = require("../models/userModel");
-const yearModel = require("../models/fiscalYearModel");
+const fiscalYearModel = require("../models/fiscalYearModel");
 const transformData = (data, fid, id) => {
   return data.map((item) => {
-    const [start_date, end_date,fyear, description, emissions, type, scope] =
+    const [start_date, end_date, fyear, description, emissions, type, scope] =
       item["start_date,end_date,fyear,description,emissions,type,scope"].split(
         ","
       );
@@ -16,7 +16,7 @@ const transformData = (data, fid, id) => {
       end_date,
       fyear: fid,
       description,
-      emissions:Number(emissions),
+      emissions: Number(emissions),
       type,
       scope: modifiedScope,
       organization: id,
@@ -33,23 +33,35 @@ const createEmission = async (req, res) => {
     const userData = await userModel.findOne({ token });
 
     const userOrganizationId = userData.organization;
-    const fyear = SelectedOption.value;
+    const fyearvalue = SelectedOption.value;
 
-    let fyeardata;
-    try {
-      fyeardata = new yearModel({ fiscalyear: fyear, userOrganizationId });
-      await fyeardata.save();
-    } catch (err) {
-      return res.status(404).send(err);
+    // console.log(data);
+
+    const existYear = await fiscalYearModel.findOne({ fiscalyear: fyearvalue });
+
+    // console.log(existYear);
+
+    let fiscaldata = existYear;
+
+    if (!existYear) {
+      try {
+        fiscaldata = new yearModel({
+          fiscalyear: fyearvalue,
+          organization: userOrganizationId,
+        });
+        await fiscaldata.save();
+      } catch (err) {
+        return res.status(404).send({ mess: "fiscal year not created", err });
+      }
     }
- 
+    // console.log(fiscaldata);
 
     const transformedData = await transformData(
       data,
-      fyeardata._id,
+      fiscaldata._id,
       userOrganizationId
     );
-    
+
     const newEmission = await emissionModel.insertMany(transformedData);
 
     return res
@@ -72,7 +84,7 @@ const deleteAllEmission = async (req, res) => {
 };
 const getAllEmissions = async (req, res) => {
   try {
-    const allemissions = await emissionModel.find().populate("organization").populate("fyear");
+    const allemissions = await emissionModel.find().populate("fyear");
     return res.status(200).send(allemissions);
   } catch (err) {
     return res.status(404).send({ message: err.message });

@@ -32,11 +32,17 @@ const Water = () => {
   };
   const fyears = new Set();
   wdata.forEach((item) => {
+
     if (item.fyear) {
+ 
+      
       fyears.add(item.fyear.fiscalyear);
     }
   });
 
+
+  // console.log(wdata);
+  
 
   const options = Array.from(fyears).map((val) => ({
     value: val,

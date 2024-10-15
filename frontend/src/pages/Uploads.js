@@ -6,43 +6,56 @@ import Select from "react-select";
 import { postWastesApi } from "../apicalls/wastesApi";
 import "../styles/uploadPage.css";
 import { Box, Button, Tab, Tabs, TextField, Typography } from "@mui/material";
-import { getAllYearsApi, postYearApi } from "../apicalls/yearAPi";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { deleteYear, getAllYearsApi, postYearApi } from "../apicalls/yearAPi";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { getUserDetails } from "../apicalls/userApi";
 
 const Uploads = () => {
   const [yeardata, setyeardata] = useState();
+  const [refresh, setRefresh] = useState(false);
+  const [userOrganization, setUserOrganization] = useState();
   useEffect(() => {
     const getYearData = async (req, res) => {
       try {
         const getdata = await getAllYearsApi();
-        setyeardata(getdata);
+
+        setyeardata(getdata.data);
       } catch (err) {
         console.log(err);
       }
     };
+    const getUserData = async (req, res) => {
+      try {
+        const user = await getUserDetails();
+        setUserOrganization(user.data.organization.organization);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getUserData();
     getYearData();
-  }, [yeardata]);
+  }, [refresh]);
 
-  useEffect(() => {
-    console.log(yeardata);
-  }, []);
-  const options = [
-    { label: "F 22-23", value: "F 22-23" },
-    { label: "F 23-24", value: "F 23-24" },
-    { label: "F 24-25", value: "F 24-25" },
-  ];
+  const options = [];
+
+  if (yeardata) {
+    yeardata.map((val) => {
+      options.push({ label: val.fiscalyear, value: val.fiscalyear });
+    });
+  }
+
   const [data, setData] = useState([]);
   const [wdata, setwdata] = useState([]);
   const [wtdata, setwtdata] = useState([]);
   const [yearval, setyearval] = useState("");
-  const [selopt, setselopt] = useState("emissions");
-  const [title, settitle] = useState("Upload Emissions Data");
+  const [selopt, setselopt] = useState("Organization");
+  // const [title, settitle] = useState("Organization");
 
   const [SelectedOption1, setSelectedOption1] = useState();
   const [SelectedOption2, setSelectedOption2] = useState();
@@ -140,13 +153,22 @@ const Uploads = () => {
   };
   const handleChange = (e, val) => {
     setselopt(val);
-    settitle(val);
   };
   const handleYearSubmit = async (e) => {
     try {
       await postYearApi({ yearval });
+      setRefresh((prev) => !prev);
     } catch (err) {
       return console.log(err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteYear(id);
+      setRefresh((prev) => !prev);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -173,38 +195,63 @@ const Uploads = () => {
                 },
               }}
             >
-              <Tab label="Emissions" value="emissions" />
-              <Tab label="Water" value="water" />
-              <Tab label="Wastes" value="wastes" />
-              <Tab label="Organization" value="organization" />
+              <Tab label="Organization" value="Organization" />
+              <Tab label="Emissions" value="Upload Emissions Data" />
+              <Tab label="Water" value="Upload water Data" />
+              <Tab label="Wastes" value="Upload wastes Data" />
             </Tabs>
           </Box>
         </div>
+
         <div className="uploads-cont">
-          <Typography variant="h4">{title}</Typography>
-          {selopt === "organization" && (
+          {selopt === "Organization" && (
             <>
-              <div className="add-year-cont">
-                <TextField onChange={handleTextChange} />
-                <Button variant="contained" onClick={handleYearSubmit}>
-                  Add Year
-                </Button>
+              <div className="add-year-container">
+                <div className="organization-banner">
+                  <Typography variant="h4" sx={{  color: "rgb(52, 25, 218)"}}>Organization: </Typography>
+                  <Typography variant="h4"> {userOrganization}</Typography>
+                </div>
+                <div className="add-year-head">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      color: "rgb(52, 25, 218);",
+                    }}
+                  >
+                    Fiscal Year:
+                  </Typography>
+                  <div className="add-year-content">
+                    <TextField onChange={handleTextChange} />
+                    <Button variant="contained" onClick={handleYearSubmit}>
+                      Add Year
+                    </Button>
+                  </div>
+                </div>
               </div>
 
-              <TableContainer className="fyear-table" sx={{padding:10}}>
-                {yeardata && yeardata.data && (
+              <TableContainer className="fyear-table"sx={{paddingLeft:2}
+              }>
+                {yeardata && (
                   <Table component={Paper}>
                     <TableHead>
                       <TableRow>
                         <TableCell>S.No</TableCell>
                         <TableCell>Fiscal Year</TableCell>
+                        <TableCell>Action</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {yeardata.data.map((val, index) => (
+                      {yeardata.map((val, index) => (
                         <TableRow key={val._id}>
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>{val.fiscalyear}</TableCell>
+                          <TableCell>
+                            <Button onClick={() => handleDelete(val._id)}>
+                              Delete
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -213,7 +260,7 @@ const Uploads = () => {
               </TableContainer>
             </>
           )}
-          {selopt === "emissions" && (
+          {selopt === "Upload Emissions Data" && (
             <div className="emission-upload-cont">
               <Select
                 value={SelectedOption1}
@@ -226,7 +273,7 @@ const Uploads = () => {
               </Button>
             </div>
           )}
-          {selopt === "water" && (
+          {selopt === "Upload water Data" && (
             <div className="water-upload-cont">
               <Select
                 value={SelectedOption2}
@@ -239,7 +286,7 @@ const Uploads = () => {
               </Button>
             </div>
           )}
-          {selopt === "wastes" && (
+          {selopt === "Upload wastes Data" && (
             <div className="wastes-upload-cont">
               <Select
                 value={SelectedOption3}

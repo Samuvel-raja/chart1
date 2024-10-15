@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Tabs, Tab, Box, Typography } from "@mui/material";
-import "../styles/Navbar.css"; // Ensure you import your CSS file
+import "../styles/Navbar.css"; 
 
 const Navbar = ({ setnavopt, navopt }) => {
-  const[val,setval]=useState();
+  const [val, setval] = useState("uploads");
   const handleChange = (event, newValue) => {
     setnavopt(newValue);
     setval(newValue);
@@ -18,13 +18,13 @@ const Navbar = ({ setnavopt, navopt }) => {
         padding: "10px",
       }}
     >
-      <Typography variant="subtitle1">draftECG</Typography>
+      <Typography variant="subtitle1">draftESG</Typography>
       <Tabs
         value={val}
         onChange={handleChange}
         TabIndicatorProps={{
           style: {
-            display:"none"
+            display: "none",
           },
         }}
         sx={{

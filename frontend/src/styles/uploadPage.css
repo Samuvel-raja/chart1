@@ -3,23 +3,20 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 20px;
   height: 90vh;
   width: 100%;
   box-shadow: var(--chart-box-shadow);
 }
-.uploads-main-cont
-{
-    display: flex;
-    
+.uploads-main-cont {
+  display: flex;
 }
-.uploads-sidebar
-{
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    padding: 40px;
-    box-shadow: var(--chart-box-shadow);
+.uploads-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 40px;
+  box-shadow: var(--chart-box-shadow);
 }
 .emission-upload-cont,
 .water-upload-cont,
@@ -51,8 +48,26 @@
   width: 200px;
   height: 40px;
 }
-.add-year-cont
+.add-year-head {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.add-year-content
 {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
+}
+.organization-banner {
+  display: flex;
+  align-self: flex-start;
+  gap: 10px;
+}
+.add-year-container
+{
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  padding: 20px;
+  gap: 40px;
 }

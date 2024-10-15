@@ -22,7 +22,16 @@ const Emission = () => {
     setSelectedOption(e);
   };
   const fyears = new Set();
-  edata.map((item) => item.map((val) => fyears.add(val.fyear.fiscalyear)));
+
+  edata.map((item) => {
+    if (item && Array.isArray(item)) {
+      item.map((val) => {
+        if (val.fyear && val.fyear.fiscalyear) {
+          fyears.add(val.fyear.fiscalyear);
+        }
+      });
+    }
+  });
 
   const options = Array.from(fyears).map((val) => ({
     value: val,
@@ -32,33 +41,31 @@ const Emission = () => {
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      width: '25%',     
-      height: '5%',     
+      width: "25%",
+      height: "5%",
     }),
     valueContainer: (provided) => ({
       ...provided,
-      height: '5%',      
-      display: 'flex',
-      alignItems: 'center', 
+      height: "5%",
+      display: "flex",
+      alignItems: "center",
     }),
     indicatorsContainer: (provided) => ({
       ...provided,
-      height: '5%', 
+      height: "5%",
     }),
     menu: (provided) => ({
       ...provided,
-      width: '25%', 
-    })
+      width: "25%",
+    }),
   };
   return (
-    
     <>
-    
       <div className="scope-nav">
         <Select
           value={SelectedOption}
           onChange={handleChange}
-          options={options} 
+          options={options}
           isMulti
           styles={customStyles}
         />

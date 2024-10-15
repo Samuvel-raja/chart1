@@ -41,18 +41,16 @@ const HorizontalBarChart = ({ edata, fyears }) => {
       return;
     }
 
-
     fyears.forEach((fyear) => {
       const emissions = [];
-      const flabel =
-        typeof fyear === "object" ? fyear.label : fyear;
+      const flabel = typeof fyear === "object" ? fyear.label : fyear;
 
       edata.forEach((val) => {
         if (Array.isArray(val)) {
           val.forEach((item) => {
-            
-            if (item.fyear.fiscalyear=== flabel) {
-              labelSet.add(item.type);
+            // Ensure item.fyear is not null/undefined before accessing fiscalyear
+            if (item.fyear && item.fyear.fiscalyear === flabel) {
+              labelSet.add(item.type); // Assuming 'type' is the label you want for Y-axis
               emissions.push(item.emissions);
             }
           });
@@ -72,8 +70,8 @@ const HorizontalBarChart = ({ edata, fyears }) => {
             : "rgb(59, 130, 246)";
 
         tempDatasets.push({
-          label: flabel,
-          data: emissions,
+          label: flabel, // Fiscal year as label
+          data: emissions, // Emission data for this fiscal year
           backgroundColor: backgroundColor,
           borderColor: borderColor,
         });
@@ -85,24 +83,25 @@ const HorizontalBarChart = ({ edata, fyears }) => {
       setElables([]);
       setDatasets([]);
     } else {
-      setElables(Array.from(labelSet).sort());
+      setElables(Array.from(labelSet).sort()); // Y-axis labels
       setDatasets(tempDatasets);
     }
   }, [edata, fyears]);
+
   const data = {
-    labels: elabels,
-    datasets: datasets,
+    labels: elabels, // Labels for the Y-axis
+    datasets: datasets, // Data for the chart
   };
 
   const options = {
-    indexAxis: "y",
+    indexAxis: "y", // Horizontal bar chart
     scales: {
       x: {
-        beginAtZero: true,
+        beginAtZero: true, // Start X-axis from zero
       },
       y: {
         grid: {
-          display: false,
+          display: false, // Disable grid lines for Y-axis
         },
       },
     },
@@ -121,7 +120,7 @@ const HorizontalBarChart = ({ edata, fyears }) => {
         position: "bottom",
       },
       datalabels: {
-        display: false,
+        display: false, // Hide data labels
       },
     },
   };

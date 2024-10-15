@@ -5,7 +5,12 @@ const creatYears = async (req, res) => {
   const token = req.cookies.token;
   const user = await userModel.findOne({ token });
   const Userorganization = user.organization;
+  const fyear = req.body.fiscalyear;
+  const existingYear = await yearModel.findOne({ fiscalyear: fyear });
 
+  if (existingYear) {
+    return res.status(400).send({ message: "Year already exists" });
+  }
   try {
     const newyears = new yearModel({
       fiscalyear: req.body.yearval,
@@ -30,8 +35,10 @@ const getAllYears = async (req, res) => {
 
 const deleteYear = async (req, res) => {
   const id = req.params.id;
+
   try {
     const deleteyear = await yearModel.findByIdAndDelete(id);
+
     return res.status(200).send(deleteyear);
   } catch (err) {
     return res.status(404).send(err);

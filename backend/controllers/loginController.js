@@ -24,7 +24,12 @@ const login = async (req, res) => {
     };
 
     const token = njwt.create(claims, process.env.SECRET_KEY);
-    res.cookie("token", token.compact());
+    res.cookie("token", token.compact(),{
+      httpOnly: true,   
+      secure: process.env.NODE_ENV === 'production',  
+      sameSite: 'Lax',  
+      maxAge: 24 * 60 * 60 * 1000, 
+    });
     
     const updateUserWithToken = await userModel.findByIdAndUpdate(
       user._id,
