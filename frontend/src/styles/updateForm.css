@@ -1,0 +1,74 @@
+
+.update-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+  }
+
+  .update-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 30px;
+    box-shadow: var(--form-box-shadow);
+    opacity: 70%;
+    font-size: smaller;
+   
+  }
+  .update-container form .form-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .update-container form .form-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .update-container form .form-main .fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .update-container form .form-main .fields input {
+    height: 35px;
+    width: 350px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--lightgray);
+  }
+  .update-container form .form-main .fields select {
+    height: 35px;
+    outline: 1px solid var(--var(--black));
+    border-radius: 5px;
+    background-color: var(--var(--white));
+    outline: none;
+  }
+  .update-container form .form-main .fields select option {
+    padding: 90px;
+    color: var(--black);
+  }
+  
+  .update-container form .form-main .fields button {
+    background-color: var(--signup-button);
+    border: 1px solid var(--signup-button);
+    color: var(--white);
+    height: 40px;
+    width: 360px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+  .update-container form .form-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+  a {
+    color: var(--black);
+  }
+  .form-footer-bottom {
+    display: flex;
+    gap: 5px;
+  }

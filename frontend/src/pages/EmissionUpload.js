@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,8 +7,20 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Button, Tab, Tabs, TextField, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import '../styles/updateForm.css'
+import {
+  Box,
+  Button,
+  Modal,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from "@mui/material";
+import {
+  getSingleEmissionApi,
+  updateEmissionApi,
+} from "../apicalls/emissionApi";
 
 const EmissionUpload = ({
   SelectedOption1,
@@ -21,7 +33,61 @@ const EmissionUpload = ({
   edata,
   handleDownload,
   handleDeleteEmission,
+  refresh,
+  setRefresh,
 }) => {
+  const [emdata, setemdata] = useState({});
+  const [id, setid] = useState("");
+
+  useEffect(() => {
+    if (id) {
+      const getSingleWater = async () => {
+        try {
+          const waterdata = await getSingleEmissionApi(id);
+          setemdata(waterdata.data);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      getSingleWater();
+    }
+  }, [id]);
+
+  const handleChange = (e) => {
+    setemdata({ ...emdata, [e.target.name]: e.target.value });
+  };
+  const handleUpdateEmission = async (e) => {
+    e.preventDefault();
+    try {
+      await updateEmissionApi(id, emdata);
+    } catch (err) {
+      console.log(err);
+    }
+
+    handleClose();
+    setRefresh((prev) => !prev);
+  };
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = (id) => {
+    setid(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => setOpen(false);
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 600,
+    height:700,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p:5
+  };
+
   return (
     <>
       {selopt === "Upload Emissions Data" && (
@@ -79,12 +145,17 @@ const EmissionUpload = ({
                         <TableCell>{val.scope}</TableCell>
                         <TableCell>{val.organization.organization}</TableCell>
                         <TableCell>
-                          <Button onClick={() => handleDeleteEmission(val._id)}>
+                          <Button onClick={() => handleDeleteEmission(val._id)} variant="contained">
                             Delete
                           </Button>
                         </TableCell>
                         <TableCell>
-                          <Link to={`/updateEmission/${val._id}`}>Update</Link>
+                          <Button
+                            variant="contained"
+                            onClick={() => handleOpen(val._id)}
+                          >
+                            Update
+                          </Button>
                         </TableCell>
                       </TableRow>
                     </>
@@ -95,6 +166,90 @@ const EmissionUpload = ({
           </TableContainer>
         </>
       )}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div className="update-container">
+            <form action="post" onSubmit={handleUpdateEmission}>
+              <div className="form-main">
+                <div className="fields">
+                  <label htmlFor="">Start_date</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your start data"
+                    name="start_date"
+                    value={emdata.start_date}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="fields">
+                  <label htmlFor="">End_date</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your end date"
+                    name="end_date"
+                    value={emdata.end_date}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="fields">
+                  <label htmlFor="">Description</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your description"
+                    name="description"
+                    value={emdata.description}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="fields">
+                  <label htmlFor="">Emissions</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your units"
+                    name="emissions"
+                    onChange={handleChange}
+                    value={emdata.emissions}
+                  />
+                </div>
+                <div className="fields">
+                  <label htmlFor="">Type</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your type"
+                    name="type"
+                    value={emdata.type}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="fields">
+                  <label htmlFor="">Scope</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your scope"
+                    name="scope"
+                    value={emdata.scope}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {/* <div className="fields">
+            <button>Sign in</button>
+          </div> */}
+              </div>
+              <div className="form-footer">
+                <Button type="submit" variant="contained">
+                  Update
+                </Button>
+              </div>
+            </form>
+          </div>
+        </Box>
+      </Modal>
     </>
   );
 };

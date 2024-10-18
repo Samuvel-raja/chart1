@@ -27,13 +27,11 @@ const BarChart = ({ eData, fyears }) => {
 
   useEffect(() => {
     if (!eData || eData.length === 0) {
-      console.log("No emission data found");
       setElables([]);
       setDatasets([]);
       return;
     }
     if (!fyears || fyears.length === 0) {
-      console.log("No fiscal years selected. Clearing the chart.");
       setElables([]);
       setDatasets([]);
       return;

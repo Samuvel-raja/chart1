@@ -28,14 +28,12 @@ const HorizontalBarChart = ({ edata, fyears }) => {
     const tempDatasets = [];
 
     if (!fyears || fyears.length === 0) {
-      console.log("No fiscal years selected. Clearing the chart.");
       setElables([]);
       setDatasets([]);
       return;
     }
 
     if (!edata || edata.length === 0) {
-      console.log("No emission data found");
       setElables([]);
       setDatasets([]);
       return;
@@ -79,7 +77,6 @@ const HorizontalBarChart = ({ edata, fyears }) => {
     });
 
     if (tempDatasets.length === 0) {
-      console.log("No datasets available. Clearing the chart.");
       setElables([]);
       setDatasets([]);
     } else {

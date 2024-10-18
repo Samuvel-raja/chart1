@@ -413,6 +413,8 @@ const Uploads = () => {
             userOrganization={userOrganization}
             handleTextChange={handleTextChange}
             handleYearSubmit={handleYearSubmit}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
           <EmissionUpload
             selopt={selopt}
@@ -425,6 +427,8 @@ const Uploads = () => {
             edata={edata}
             handleDownload={handleDownload}
             handleDeleteEmission={handleDeleteEmission}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
 
           <WaterUpload
@@ -438,6 +442,8 @@ const Uploads = () => {
             handleSubmit2={handleSubmit2}
             waterdata={waterdata}
             handleDeleteWater={handleDeleteWater}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
 
           <WastesUpload
@@ -451,6 +457,8 @@ const Uploads = () => {
             handleSubmit3={handleSubmit3}
             wastedata={wastedata}
             handleDeleteWaste={handleDeleteWaste}
+            refresh={refresh}
+            setRefresh={setRefresh}
           />
         </div>
       </div>

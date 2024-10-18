@@ -9,8 +9,7 @@ import MainPage from "./pages/MainPage";
 import Wastes from "./pages/Wastes";
 import Navbar from "./pages/Navbar";
 import { useState } from "react";
-import UpdateEmission from "./pages/UpdateEmission";
-import UpdateWater from "./pages/UpdateWater";
+
 import UpdateWastes from "./pages/UpdateWastes";
 
 function App() {
@@ -27,8 +26,6 @@ function App() {
         <Route path="/water" element={<Water />} />
         <Route path="/wastes" element={<Wastes />} />
         <Route path="/main" element={<MainPage />} />
-        <Route path="/updateEmission/:id" element={<UpdateEmission />} />
-        <Route path="/updateWater/:id" element={<UpdateWater />} />
         <Route path="/updateWastes/:id" element={<UpdateWastes />} />
       </Routes>
     </>

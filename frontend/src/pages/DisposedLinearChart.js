@@ -25,14 +25,12 @@ const DisposedLinearChart = ({ wdata, fyear }) => {
 
   useEffect(() => {
     if (!fyear || fyear.length === 0) {
-      console.log("No fiscal years selected, clearing chart");
       setElables([]);
       setDatasets([]);
       return;
     }
 
     if (!wdata || wdata.length === 0) {
-      console.log("No data found");
       setElables([]);
       setDatasets([]);
       return;
@@ -47,12 +45,10 @@ const DisposedLinearChart = ({ wdata, fyear }) => {
     );
 
     if (filteredData.length === 0) {
-      console.log("No matching discharged data for selected fiscal years");
       setElables([]);
       setDatasets([]);
       return;
     }
-    console.log(filteredData);
 
     const monthUnitsMap = {};
 
@@ -117,7 +113,7 @@ const DisposedLinearChart = ({ wdata, fyear }) => {
     labels: elabels,
     datasets: datasets,
   };
-  console.log(data);
+
 
   const options = {
     scales: {
