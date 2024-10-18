@@ -1,25 +1,49 @@
 import React, { useEffect, useState } from "react";
 import Papa from "papaparse";
-import { postEmissionApi } from "../apicalls/emissionApi";
-import { postWaterApi } from "../apicalls/waterApi";
-import Select from "react-select";
-import { postWastesApi } from "../apicalls/wastesApi";
+import {
+  deleteEmissionApi,
+  getEmissionApi,
+  postEmissionApi,
+} from "../apicalls/emissionApi";
+import {
+  deleteWaterApi,
+  getAllWatersApi,
+  postWaterApi,
+} from "../apicalls/waterApi";
+import {
+  deleteWasteApi,
+  deleteWastesApi,
+  getAllWastesApi,
+  postWastesApi,
+} from "../apicalls/wastesApi";
 import "../styles/uploadPage.css";
-import { Box, Button, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { deleteYear, getAllYearsApi, postYearApi } from "../apicalls/yearAPi";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+
 import { getUserDetails } from "../apicalls/userApi";
+import * as XLSX from "xlsx";
+import OrganizationUpload from "./OrganizationUpload";
+import EmissionUpload from "./EmissionUpload";
+import WaterUpload from "./WaterUpload";
+import WastesUpload from "./WastesUpload";
 
 const Uploads = () => {
   const [yeardata, setyeardata] = useState();
   const [refresh, setRefresh] = useState(false);
+  const [data, setData] = useState([]);
+  const [wdata, setwdata] = useState([]);
+  const [wtdata, setwtdata] = useState([]);
+  const [yearval, setyearval] = useState("");
+  const [selopt, setselopt] = useState("Organization");
+  const [wastedata, setwastedata] = useState();
+  const [waterdata, setwaterdata] = useState([]);
+  const [edata, setedata] = useState([]);
+  const [SelectedOption1, setSelectedOption1] = useState();
+  const [SelectedOption2, setSelectedOption2] = useState();
+  const [SelectedOption3, setSelectedOption3] = useState();
+  const [typeofdata, settypeofdata] = useState("");
   const [userOrganization, setUserOrganization] = useState();
+
   useEffect(() => {
     const getYearData = async (req, res) => {
       try {
@@ -42,6 +66,36 @@ const Uploads = () => {
     getYearData();
   }, [refresh]);
 
+  useEffect(() => {
+    try {
+      const getWaterData = async () => {
+        const data = await getAllWatersApi();
+        setwaterdata(data.data.getallWaters);
+      };
+      getWaterData();
+    } catch (err) {
+      console.log(err);
+    }
+    try {
+      const getWastesData = async () => {
+        const data = await getAllWastesApi();
+        setwastedata(data.data);
+      };
+      getWastesData();
+    } catch (err) {
+      console.log(err);
+    }
+    const getAllEmissions = async () => {
+      try {
+        const emissionData = await getEmissionApi();
+        setedata(emissionData.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getAllEmissions();
+  }, [refresh]);
+
   const options = [];
 
   if (yeardata) {
@@ -50,36 +104,62 @@ const Uploads = () => {
     });
   }
 
-  const [data, setData] = useState([]);
-  const [wdata, setwdata] = useState([]);
-  const [wtdata, setwtdata] = useState([]);
-  const [yearval, setyearval] = useState("");
-  const [selopt, setselopt] = useState("Organization");
-  // const [title, settitle] = useState("Organization");
+  const handleChange1 = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    if (fileExtension == "xlsx") {
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        const processedData = jsonData.map((row) => {
+          return Object.keys(row).reduce((acc, key) => {
+            const value = row[key];
+            if (
+              typeof value === "number" &&
+              key.toLowerCase().includes("date")
+            ) {
+              acc[key] = excelDateToString(value);
+            } else {
+              acc[key] = value;
+            }
+            return acc;
+          }, {});
+        });
 
-  const [SelectedOption1, setSelectedOption1] = useState();
-  const [SelectedOption2, setSelectedOption2] = useState();
-  const [SelectedOption3, setSelectedOption3] = useState();
+        setData(processedData);
+        settypeofdata("excell");
+      };
 
-  const handleChange1 = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          setData(results.data);
-        },
-        error: (error) => {
-          console.error("Error parsing CSV:", error);
-        },
-      });
+      reader.readAsBinaryString(file);
+    } else if (fileExtension == "csv") {
+      if (file) {
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            setData(results.data);
+          },
+          error: (error) => {
+            console.error("Error parsing CSV:", error);
+          },
+        });
+      }
+      settypeofdata("csv");
     }
   };
+
   const handleSubmit1 = async (e) => {
     e.preventDefault();
     try {
-      await postEmissionApi({ data, SelectedOption: SelectedOption1 });
+      await postEmissionApi({
+        data,
+        SelectedOption: SelectedOption1,
+        typeofdata: typeofdata,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -88,40 +168,108 @@ const Uploads = () => {
 
   const handleChange2 = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          setwdata(results.data);
-        },
-        error: (error) => {
-          console.error("Error parsing CSV:", error);
-        },
-      });
+    const reader = new FileReader();
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    if (fileExtension == "xlsx") {
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        const processedData = jsonData.map((row) => {
+          return Object.keys(row).reduce((acc, key) => {
+            const value = row[key];
+            if (
+              typeof value === "number" &&
+              key.toLowerCase().includes("date")
+            ) {
+              acc[key] = excelDateToString(value);
+            } else {
+              acc[key] = value;
+            }
+            return acc;
+          }, {});
+        });
+
+        setwdata(processedData);
+        settypeofdata("excell");
+      };
+
+      reader.readAsBinaryString(file);
+    } else if (fileExtension == "csv") {
+      if (file) {
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            setwdata(results.data);
+          },
+          error: (error) => {
+            console.error("Error parsing CSV:", error);
+          },
+        });
+      }
+      settypeofdata("csv");
     }
   };
 
   const handleChange3 = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          setwtdata(results.data);
-        },
-        error: (error) => {
-          console.error("Error parsing CSV:", error);
-        },
-      });
+    const reader = new FileReader();
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+    if (fileExtension == "xlsx") {
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+        const processedData = jsonData.map((row) => {
+          return Object.keys(row).reduce((acc, key) => {
+            const value = row[key];
+            if (
+              typeof value === "number" &&
+              key.toLowerCase().includes("date")
+            ) {
+              acc[key] = excelDateToString(value);
+            } else {
+              acc[key] = value;
+            }
+            return acc;
+          }, {});
+        });
+
+        setwtdata(processedData);
+        settypeofdata("excell");
+      };
+
+      reader.readAsBinaryString(file);
+    } else if (fileExtension == "csv") {
+      if (file) {
+        Papa.parse(file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            setwtdata(results.data);
+          },
+          error: (error) => {
+            console.error("Error parsing CSV:", error);
+          },
+        });
+      }
+      settypeofdata("csv");
     }
   };
 
   const handleSubmit2 = async (e) => {
     e.preventDefault();
     try {
-      await postWaterApi({ wdata, SelectedOption: SelectedOption2 });
+      await postWaterApi({
+        wdata,
+        typeofdata,
+        SelectedOption: SelectedOption2,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -131,7 +279,11 @@ const Uploads = () => {
   const handleSubmit3 = async (e) => {
     e.preventDefault();
     try {
-      await postWastesApi({ wtdata, SelectedOption: SelectedOption3 });
+      await postWastesApi({
+        wtdata,
+        typeofdata,
+        SelectedOption: SelectedOption3,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -171,7 +323,57 @@ const Uploads = () => {
       console.log(err);
     }
   };
+  const handleDeleteEmission = async (id) => {
+    try {
+      await deleteEmissionApi(id);
+      setRefresh((prev) => !prev);
+     
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleDeleteWater = async (id) => {
+    try {
+      await deleteWaterApi(id);
+      setRefresh((prev) => !prev);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleDeleteWaste = async (id) => {
+    try {
+      await deleteWasteApi(id);
+      setRefresh((prev) => !prev);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      width: 300,
+      height: 55,
+    }),
+  };
+  const handleDownload = (filepath, filename) => {
+    const link = document.createElement("a");
+    link.href = filepath;
+    link.setAttribute("download", filename);
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+  };
+
+  const excelDateToString = (serial) => {
+    const excelEpoch = new Date(1899, 11, 30);
+    const jsDate = new Date(
+      excelEpoch.getTime() + serial * 24 * 60 * 60 * 1000
+    );
+    return jsDate.toISOString().split("T")[0];
+  };
   return (
     <>
       <div className="uploads-main-cont">
@@ -204,101 +406,52 @@ const Uploads = () => {
         </div>
 
         <div className="uploads-cont">
-          {selopt === "Organization" && (
-            <>
-              <div className="add-year-container">
-                <div className="organization-banner">
-                  <Typography variant="h4" sx={{  color: "rgb(52, 25, 218)"}}>Organization: </Typography>
-                  <Typography variant="h4"> {userOrganization}</Typography>
-                </div>
-                <div className="add-year-head">
-                  <Typography
-                    variant="h5"
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      color: "rgb(52, 25, 218);",
-                    }}
-                  >
-                    Fiscal Year:
-                  </Typography>
-                  <div className="add-year-content">
-                    <TextField onChange={handleTextChange} />
-                    <Button variant="contained" onClick={handleYearSubmit}>
-                      Add Year
-                    </Button>
-                  </div>
-                </div>
-              </div>
+          <OrganizationUpload
+            selopt={selopt}
+            handleDelete={handleDelete}
+            yeardata={yeardata}
+            userOrganization={userOrganization}
+            handleTextChange={handleTextChange}
+            handleYearSubmit={handleYearSubmit}
+          />
+          <EmissionUpload
+            selopt={selopt}
+            SelectedOption1={SelectedOption1}
+            handleChangeEmission={handleChangeEmission}
+            options={options}
+            customStyles={customStyles}
+            handleChange1={handleChange1}
+            handleSubmit1={handleSubmit1}
+            edata={edata}
+            handleDownload={handleDownload}
+            handleDeleteEmission={handleDeleteEmission}
+          />
 
-              <TableContainer className="fyear-table"sx={{paddingLeft:2}
-              }>
-                {yeardata && (
-                  <Table component={Paper}>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>S.No</TableCell>
-                        <TableCell>Fiscal Year</TableCell>
-                        <TableCell>Action</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {yeardata.map((val, index) => (
-                        <TableRow key={val._id}>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{val.fiscalyear}</TableCell>
-                          <TableCell>
-                            <Button onClick={() => handleDelete(val._id)}>
-                              Delete
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </TableContainer>
-            </>
-          )}
-          {selopt === "Upload Emissions Data" && (
-            <div className="emission-upload-cont">
-              <Select
-                value={SelectedOption1}
-                onChange={handleChangeEmission}
-                options={options}
-              />
-              <TextField type="file" accept=".csv" onChange={handleChange1} />
-              <Button variant="contained" onClick={handleSubmit1}>
-                UPLOAD
-              </Button>
-            </div>
-          )}
-          {selopt === "Upload water Data" && (
-            <div className="water-upload-cont">
-              <Select
-                value={SelectedOption2}
-                onChange={handleChangeWater}
-                options={options}
-              />
-              <TextField type="file" accept=".csv" onChange={handleChange2} />
-              <Button variant="contained" onClick={handleSubmit2}>
-                UPLOAD
-              </Button>
-            </div>
-          )}
-          {selopt === "Upload wastes Data" && (
-            <div className="wastes-upload-cont">
-              <Select
-                value={SelectedOption3}
-                onChange={handleChangeWastes}
-                options={options}
-              />
-              <TextField type="file" accept=".csv" onChange={handleChange3} />
-              <Button variant="contained" onClick={handleSubmit3}>
-                UPLOAD
-              </Button>
-            </div>
-          )}
+          <WaterUpload
+            selopt={selopt}
+            SelectedOption2={SelectedOption2}
+            handleChangeWater={handleChangeWater}
+            options={options}
+            customStyles={customStyles}
+            handleChange2={handleChange2}
+            handleDownload={handleDownload}
+            handleSubmit2={handleSubmit2}
+            waterdata={waterdata}
+            handleDeleteWater={handleDeleteWater}
+          />
+
+          <WastesUpload
+            selopt={selopt}
+            SelectedOption3={SelectedOption3}
+            handleChangeWastes={handleChangeWastes}
+            options={options}
+            customStyles={customStyles}
+            handleChange3={handleChange3}
+            handleDownload={handleDownload}
+            handleSubmit3={handleSubmit3}
+            wastedata={wastedata}
+            handleDeleteWaste={handleDeleteWaste}
+          />
         </div>
       </div>
     </>

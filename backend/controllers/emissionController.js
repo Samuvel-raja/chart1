@@ -2,12 +2,10 @@ const { default: mongoose } = require("mongoose");
 const emissionModel = require("../models/emissionModel");
 const userModel = require("../models/userModel");
 const fiscalYearModel = require("../models/fiscalYearModel");
-const transformData = (data, fid, id) => {
+const transformCSVData = (data, fid, id) => {
   return data.map((item) => {
-    const [start_date, end_date, fyear, description, emissions, type, scope] =
-      item["start_date,end_date,fyear,description,emissions,type,scope"].split(
-        ","
-      );
+    const [start_date, end_date, description, emissions, type, scope] =
+      item["start_date,end_date,description,emissions,type,scope"].split(",");
 
     let modifiedScope = scope.trim();
 
@@ -24,8 +22,27 @@ const transformData = (data, fid, id) => {
   });
 };
 
+const transformExcellData = (data, fid, id) => {
+  // console.log(data);
+
+  return data.map((item) => {
+    return {
+      start_date: item.start_date,
+      end_date: item.end_date,
+      fyear: fid,
+      description: item.description,
+      emissions: Number(item.emissions),
+      type: item.type,
+      scope: item.scope,
+      organization: id,
+    };
+  });
+};
+
 const createEmission = async (req, res) => {
-  const { data, SelectedOption } = req.body;
+  const { data, SelectedOption, typeofdata } = req.body;
+
+  // console.log(data);
 
   try {
     const token = req.cookies.token;
@@ -54,15 +71,29 @@ const createEmission = async (req, res) => {
         return res.status(404).send({ mess: "fiscal year not created", err });
       }
     }
-    // console.log(fiscaldata);
 
-    const transformedData = await transformData(
-      data,
-      fiscaldata._id,
-      userOrganizationId
-    );
+    let newEmission;
 
-    const newEmission = await emissionModel.insertMany(transformedData);
+    if (typeofdata == "csv") {
+      const transformedData = await transformCSVData(
+        data,
+        fiscaldata._id,
+        userOrganizationId
+      );
+      // console.log(transformedData);
+
+      newEmission = await emissionModel.insertMany(transformedData);
+    }
+    if (typeofdata == "excell") {
+      const transformedExcelldata = transformExcellData(
+        data,
+        fiscaldata._id,
+        userOrganizationId
+      );
+      // console.log(transformedExcelldata);
+
+      newEmission = await emissionModel.insertMany(transformedExcelldata);
+    }
 
     return res
       .status(200)
@@ -84,7 +115,10 @@ const deleteAllEmission = async (req, res) => {
 };
 const getAllEmissions = async (req, res) => {
   try {
-    const allemissions = await emissionModel.find().populate("fyear");
+    const allemissions = await emissionModel
+      .find()
+      .populate("fyear")
+      .populate("organization");
     return res.status(200).send(allemissions);
   } catch (err) {
     return res.status(404).send({ message: err.message });
@@ -117,10 +151,21 @@ const deleteEmission = async (req, res) => {
   }
 };
 
+const getSingleEmission = async (req, res) => {
+  const id = req.params.id;
+  
+  try {
+    const singledata = await emissionModel.findOne({_id:id})
+    return res.status(200).send(singledata);
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
 module.exports = {
   createEmission,
   getAllEmissions,
   updateEmission,
   deleteEmission,
   deleteAllEmission,
+  getSingleEmission,
 };

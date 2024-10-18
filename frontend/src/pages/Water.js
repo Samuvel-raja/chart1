@@ -26,60 +26,50 @@ const Water = () => {
     }
   }, []);
 
-
   const handleChange = (e) => {
     setSelectedOption(e);
   };
   const fyears = new Set();
   wdata.forEach((item) => {
-
     if (item.fyear) {
- 
-      
       fyears.add(item.fyear.fiscalyear);
     }
   });
-
-
-  // console.log(wdata);
-  
 
   const options = Array.from(fyears).map((val) => ({
     value: val,
     label: val,
   }));
 
-  
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      width: '25%',     
-      height: '5%',     
+      width: "25%",
+      height: "5%",
     }),
     valueContainer: (provided) => ({
       ...provided,
-      height: '5%',      
-      display: 'flex',
-      alignItems: 'center', 
+      height: "5%",
+      display: "flex",
+      alignItems: "center",
     }),
     indicatorsContainer: (provided) => ({
       ...provided,
-      height: '5%', 
+      height: "5%",
     }),
     menu: (provided) => ({
       ...provided,
-      width: '25%', 
-    })
+      width: "25%",
+    }),
   };
 
-  
   return (
     <>
-        <div className="scope-nav">
+      <div className="scope-nav">
         <Select
           value={SelectedOption}
           onChange={handleChange}
-          options={options} 
+          options={options}
           isMulti
           styles={customStyles}
         />
@@ -87,34 +77,34 @@ const Water = () => {
       <div className="main-water-cont">
         <div className="water-cont-1">
           <div className="water-inside-cont-1">
-            <WithDrawnChart wdata={wdata} fyear={SelectedOption}/>
+            <WithDrawnChart wdata={wdata} fyear={SelectedOption} />
           </div>
           <div className="water-inside-cont-2">
-            <WithdrawnLineChart wdata={wdata} fyear={SelectedOption}/>
+            <WithdrawnLineChart wdata={wdata} fyear={SelectedOption} />
           </div>
         </div>
         <div className="water-cont-2">
           <div className="water-inside-cont-1">
-            <DisChargedChart wdata={wdata} fyear={SelectedOption}/>
+            <DisChargedChart wdata={wdata} fyear={SelectedOption} />
           </div>
           <div className="water-inside-cont-2">
-            <DischargedLinearChart wdata={wdata} fyear={SelectedOption}/>
+            <DischargedLinearChart wdata={wdata} fyear={SelectedOption} />
           </div>
         </div>
         <div className="water-cont-3">
           <div className="water-inside-cont-1">
-            <ReCycledChart wdata={wdata} fyear={SelectedOption}/>
+            <ReCycledChart wdata={wdata} fyear={SelectedOption} />
           </div>
           <div className="water-inside-cont-2">
-            <ReCycledLineChart wdata={wdata} fyear={SelectedOption}/>
+            <ReCycledLineChart wdata={wdata} fyear={SelectedOption} />
           </div>
         </div>
         <div className="water-cont-4">
           <div className="water-inside-cont-1">
-            <ConsumedChart wdata={wdata} fyear={SelectedOption}/>
+            <ConsumedChart wdata={wdata} fyear={SelectedOption} />
           </div>
           <div className="water-inside-cont-2">
-            <ConsumedLineChart wdata={wdata} fyear={SelectedOption}/>
+            <ConsumedLineChart wdata={wdata} fyear={SelectedOption} />
           </div>
         </div>
       </div>

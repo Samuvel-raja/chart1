@@ -1,5 +1,6 @@
 import axios from "axios";
-import { CREATE_WATER, GET_ALL_WATERS } from "../apiUrls/waterApiUrl";
+
+import { WATER_URL } from "../apiUrls/waterApiUrl";
 
 const postWaterApi=async(data)=>
 {
@@ -7,7 +8,7 @@ const postWaterApi=async(data)=>
         {
             method:"POST",
             data:data,
-            url:CREATE_WATER
+            url:WATER_URL
         }
     )
 }
@@ -16,8 +17,37 @@ const getAllWatersApi=async()=>
         return axios(
             {
                 method:"GET",
-                url:GET_ALL_WATERS
+                url:WATER_URL
             }
         )
     }
-export {postWaterApi,getAllWatersApi};
+const deleteWaterApi=async(id)=>
+{
+    return axios(
+        {
+            method:"DELETE",
+            url:`${WATER_URL}/${id}`
+            
+        }
+    )
+}
+const updateWaterApi=async(id,data)=>
+{
+    return axios(
+        {
+            method:"PUT",
+            data:data,
+            url:`${WATER_URL}/${id}`
+        }
+    )
+}
+const getSingleWaterApi=async(id)=>
+{
+    return axios(
+        {
+            method:"GET",
+            url:`${WATER_URL}/${id}`
+        }
+    )
+}
+export {postWaterApi,getAllWatersApi,deleteWaterApi,updateWaterApi,getSingleWaterApi};

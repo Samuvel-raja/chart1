@@ -3,9 +3,12 @@ const waterModel = require("../models/waterModel");
 const yearModel = require("../models/fiscalYearModel");
 
 const transformData = (data, organizationId, fiscalId) => {
+  // console.log(data);
+
   return data.map((item) => {
     const value = Object.values(item)[0];
-    const [start_date, end_date, fyear, units, type, status] = value.split(",");
+
+    const [start_date, end_date, units, type, status] = value.split(",");
 
     return {
       start_date: start_date.trim(),
@@ -18,13 +21,28 @@ const transformData = (data, organizationId, fiscalId) => {
     };
   });
 };
+const transformExcellData = (data, organizationId, fiscalId) => {
+  // console.log(data);
 
+  return data.map((item) => {
+    return {
+      start_date: item.start_date,
+      end_date: item.end_date,
+      fyear: fiscalId,
+      units: item.units,
+      type: item.type,
+      status: item.status,
+      organization: organizationId,
+    };
+  });
+};
 const createWater = async (req, res) => {
   const token = req.cookies.token;
   const user = await userModel.findOne({ token });
   const organization = user.organization;
 
-  const { wdata, SelectedOption } = req.body;
+  const { wdata, typeofdata, SelectedOption } = req.body;
+
   const fyearvalue = SelectedOption.value;
 
   const existYear = await yearModel.findOne({ fiscalyear: fyearvalue });
@@ -40,10 +58,26 @@ const createWater = async (req, res) => {
         return res.status(404).send({ mess: "fiscal year not created", err });
       }
     }
+    let newwater;
+    if (typeofdata == "csv") {
+      const transformeddata = transformData(
+        wdata,
+        organization,
+        fiscaldata._id
+      );
 
-    const transformeddata = transformData(wdata, organization, fiscaldata._id);
+      newwater = await waterModel.insertMany(transformeddata);
+    }
+    if (typeofdata == "excell") {
+      const transformedExcelldata = transformExcellData(
+        wdata,
+        organization,
+        fiscaldata._id
+      );
+      // console.log(transformedExcelldata);
 
-    const newwater = await waterModel.insertMany(transformeddata);
+      newwater = await waterModel.insertMany(transformedExcelldata);
+    }
     return res
       .status(200)
       .send({ message: "Water successfully created", newwater });
@@ -82,7 +116,10 @@ const deleteWater = async (req, res) => {
 
 const getAllWaters = async (req, res) => {
   try {
-    const getallWaters = await waterModel.find().populate('organization').populate('fyear');
+    const getallWaters = await waterModel
+      .find()
+      .populate("organization")
+      .populate("fyear");
     return res
       .status(200)
       .send({ message: "Water successfully received", getallWaters });
@@ -100,10 +137,20 @@ const deleteAllWaters = async (req, res) => {
   }
 };
 
+const getSingleWater = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const singlewater = await waterModel.findOne({ _id: id });
+    return res.status(200).send(singlewater);
+  } catch (err) {
+    return res.status(400).send(err);
+  }
+};
 module.exports = {
   createWater,
   updateWater,
   deleteWater,
   getAllWaters,
   deleteAllWaters,
+  getSingleWater,
 };

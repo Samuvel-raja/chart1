@@ -20,9 +20,6 @@ ChartJS.register(
 );
 
 const WithDrawnChart = ({ wdata, fyear }) => {
-
-  
-  
   const [elabels, setElables] = useState([]);
   const [datasets, setDatasets] = useState([]);
 
@@ -41,16 +38,19 @@ const WithDrawnChart = ({ wdata, fyear }) => {
       return;
     }
 
-    const selectedfyear = fyear.map((f) => f.value); 
+    const selectedfyear = fyear.map((f) => f.value);
 
+    if (selectedfyear.length === 0) {
+      setElables([]);
+      setDatasets([]);
+      return;
+    }
     const filteredData = wdata.filter(
       (item) =>
-        item.status === "withdrawn" && 
-        selectedfyear.includes(item.fyear.fiscalyear) 
+        item.status === "withdrawn" &&
+        selectedfyear.includes(item.fyear.fiscalyear)
     );
 
-//  console.log(filteredData);
- 
     if (filteredData.length === 0) {
       console.log("No matching withdrawn data for selected fiscal years");
       setElables([]);
@@ -61,36 +61,34 @@ const WithDrawnChart = ({ wdata, fyear }) => {
     const labelSet = new Set();
     const unitsMap = {};
 
-  
     selectedfyear.forEach((year) => {
       unitsMap[year] = {};
     });
 
     filteredData.forEach((item) => {
-      const { type, units, fyear } = item; 
-      labelSet.add(type); 
-  
+      const { type, units, fyear } = item;
+      labelSet.add(type);
 
       if (!unitsMap[fyear.fiscalyear][type]) {
         unitsMap[fyear.fiscalyear][type] = 0;
       }
-      unitsMap[fyear.fiscalyear][type] += units; 
+      unitsMap[fyear.fiscalyear][type] += units;
     });
 
-    const labelsArray = Array.from(labelSet); 
+    const labelsArray = Array.from(labelSet);
     const backgroundColors = ["rgb(59, 130, 246)", "rgb(205, 213, 223)"];
-  
-    const tempDatasets = selectedfyear.map((year,index) => {
+
+    const tempDatasets = selectedfyear.map((year, index) => {
       return {
         label: year,
-        data: labelsArray.map((label) => unitsMap[year][label] || 0), 
-        backgroundColor: backgroundColors[index % 2], 
-        borderColor: backgroundColors[index % 2]
+        data: labelsArray.map((label) => unitsMap[year][label] || 0),
+        backgroundColor: backgroundColors[index % 2],
+        borderColor: backgroundColors[index % 2],
       };
     });
 
-    setElables(labelsArray); 
-    setDatasets(tempDatasets); 
+    setElables(labelsArray);
+    setDatasets(tempDatasets);
   }, [wdata, fyear]);
 
   const data = {
@@ -115,12 +113,11 @@ const WithDrawnChart = ({ wdata, fyear }) => {
     },
     plugins: {
       legend: {
-        display: true, 
+        display: true,
         position: "top",
       },
-      datalabels:
-      {
-        display:false
+      datalabels: {
+        display: false,
       },
       title: {
         display: true,

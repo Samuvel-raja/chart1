@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { EMISSION_URL } from '../apiUrls/emissionApiUrl';
 
-const getEmissionApi=async()=>
+const getEmissionApi=()=>
 {
     return axios(
         {
@@ -10,7 +10,7 @@ const getEmissionApi=async()=>
         }
     )
 }
-const postEmissionApi=async(data)=>
+const postEmissionApi=(data)=>
     {
         return axios(
             {
@@ -20,4 +20,35 @@ const postEmissionApi=async(data)=>
             }
         )
     }
-export {getEmissionApi,postEmissionApi}
+    const deleteEmissionApi=(id)=>
+    {
+        
+        return axios(
+            {
+                method:"DELETE",
+                url:`${EMISSION_URL}/${id}`
+
+            }
+        )
+    }
+    const updateEmissionApi=(id,emdata)=>
+    {
+        return axios(
+            {
+                method:"PUT",
+                data:emdata,
+                url:`${EMISSION_URL}/${id}`
+            }
+        )
+    }
+    const singleEmissionApi=(id)=>
+    {
+        
+        return axios(
+            {
+                method:"GET",
+                url:`${EMISSION_URL}/${id}`
+            }
+        )
+    }
+export {getEmissionApi,postEmissionApi,deleteEmissionApi,updateEmissionApi,singleEmissionApi}
