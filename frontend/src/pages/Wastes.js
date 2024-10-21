@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { getAllWastesApi } from "../apicalls/wastesApi";
-
-import DischargedLinearChart from "./DischargedLinearChart";
-import ReCycledLinearChart from "./ReCycledLinearChart";
+import '../styles/waterChart.css'
 
 import GeneratedChart from "./GeneratedChart";
 import DisposedChart from "./DisposedChart";

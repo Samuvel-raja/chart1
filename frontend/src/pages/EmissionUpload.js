@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import '../styles/updateForm.css'
+import "../styles/updateForm.css";
 import {
   Box,
   Button,
@@ -54,7 +54,20 @@ const EmissionUpload = ({
   }, [id]);
 
   const handleChange = (e) => {
-    setemdata({ ...emdata, [e.target.name]: e.target.value });
+    const { name, value } = e.target.value;
+
+    // if (name.includes(".")) {
+    //   const { parentkey, childkey } = name.split(".");
+    //   setemdata((prevdata) => ({
+    //     ...prevdata,
+    //     [parentkey]: {
+    //       ...prevdata[parentkey],
+    //       [childkey]: value,
+    //     },
+    //   }));
+    // } else {
+      setemdata({ ...emdata, [e.target.name]: e.target.value });
+    // }
   };
   const handleUpdateEmission = async (e) => {
     e.preventDefault();
@@ -82,10 +95,10 @@ const EmissionUpload = ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 600,
-    height:700,
+    height: 700,
     bgcolor: "background.paper",
     boxShadow: 24,
-    p:5
+    p: 5,
   };
 
   return (
@@ -127,6 +140,7 @@ const EmissionUpload = ({
                     <TableCell>Description </TableCell>
                     <TableCell>Emission Units </TableCell>
                     <TableCell>Type</TableCell>
+                    {/* <TableCell>Fiscal Year</TableCell> */}
                     <TableCell>SCope</TableCell>
                     <TableCell>Organization</TableCell>
                     <TableCell>Delete</TableCell>
@@ -142,10 +156,14 @@ const EmissionUpload = ({
                         <TableCell>{val.description}</TableCell>
                         <TableCell>{val.emissions}</TableCell>
                         <TableCell>{val.type}</TableCell>
+                        {/* <TableCell>{val.fyear.fiscalyear}</TableCell> */}
                         <TableCell>{val.scope}</TableCell>
                         <TableCell>{val.organization.organization}</TableCell>
                         <TableCell>
-                          <Button onClick={() => handleDeleteEmission(val._id)} variant="contained">
+                          <Button
+                            onClick={() => handleDeleteEmission(val._id)}
+                            variant="contained"
+                          >
                             Delete
                           </Button>
                         </TableCell>
@@ -226,6 +244,16 @@ const EmissionUpload = ({
                     onChange={handleChange}
                   />
                 </div>
+                {/* <div className="fields">
+                  <label htmlFor="">Fiscal Year</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your fiscalyear"
+                    name="fyear.fiscalyear"
+                    value={emdata.fyear?.fiscalyear}
+                    onChange={handleChange}
+                  />
+                </div> */}
                 <div className="fields">
                   <label htmlFor="">Scope</label>
                   <input

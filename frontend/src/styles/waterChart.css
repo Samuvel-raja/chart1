@@ -10,11 +10,13 @@
 }
 .water-inside-cont-1 {
   width: 40%;
+  height: 500px;
   box-shadow: var(--chart-box-shadow);
   padding: 20px;
 }
 .water-inside-cont-2 {
   width: 50%;
+  height: 500px;
   box-shadow: var(--chart-box-shadow);
   padding: 20px;
 }

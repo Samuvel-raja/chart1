@@ -104,9 +104,7 @@ const LineChart = ({ eData = [[]], fyears = [] }) => {
     <div style={{ width: "80%", height: "90%" }}>
       {labels.length > 0 ? (
         <Line data={chartData} options={options} />
-      ) : (
-        <p>No data to display</p>
-      )}
+      ):""}
     </div>
   );
 };

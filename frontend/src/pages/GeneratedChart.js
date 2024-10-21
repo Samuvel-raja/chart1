@@ -10,7 +10,14 @@ import {
   Legend,
 } from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const GeneratedChart = ({ wdata, fyear }) => {
   const [elabels, setElables] = useState([]);
@@ -29,7 +36,7 @@ const GeneratedChart = ({ wdata, fyear }) => {
       return;
     }
 
-    const selectedfyear = fyear.map((f) => f.value); // selected fiscal years
+    const selectedfyear = fyear.map((f) => f.value);
 
     const filteredData = wdata.filter(
       (item) =>
@@ -60,23 +67,32 @@ const GeneratedChart = ({ wdata, fyear }) => {
       unitsMap[fyear.fiscalyear][category] += quantity;
     });
 
-    const labelsArray = Array.from(labelSet); 
+    
+    const labelsArray = Array.from(labelSet);
+
     const tempDatasets = selectedfyear.map((year, index) => {
-      const backgroundColor = index % 2 === 0 ?  "rgb(205, 213, 223)" : "rgb(59, 130, 246)"; 
-      const borderColor = index % 2 === 0 ? "rgb(205, 213, 223)": "rgb(59, 130, 246)"; 
+      const backgroundColor =
+        index % 2 === 0 ? "rgb(205, 213, 223)" : "rgb(59, 130, 246)";
+      const borderColor =
+        index % 2 === 0 ? "rgb(205, 213, 223)" : "rgb(59, 130, 246)";
 
       return {
         label: year,
         data: labelsArray.map((label) => unitsMap[year][label] || 0),
-        backgroundColor: backgroundColor,
-        borderColor: borderColor,
+        backgroundColor,
+        borderColor,
         borderWidth: 1,
       };
     });
 
-    setElables(labelsArray); // Set labels for x-axis
-    setDatasets(tempDatasets); // Set datasets for chart
+    setElables(labelsArray);
+    setDatasets(tempDatasets);
   }, [wdata, fyear]);
+
+
+  if (!fyear || fyear.length === 0) {
+    return null;
+  }
 
   const data = {
     labels: elabels,
@@ -108,7 +124,7 @@ const GeneratedChart = ({ wdata, fyear }) => {
       },
       title: {
         display: true,
-        text: "Disposed Units by Fiscal Year",
+        text: "Generated Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",

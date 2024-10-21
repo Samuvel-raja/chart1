@@ -105,15 +105,22 @@ const GeneratedLinearChart = ({ wdata, fyear }) => {
       };
     });
 
+  
     setElables(labelsArray);
     setDatasets(tempDatasets);
   }, [wdata, fyear]);
-
+  
+  if (!fyear || fyear.length === 0) {
+    return null;
+  }
+  
+  
   const data = {
     labels: elabels,
     datasets: datasets,
   };
 
+  
   const options = {
     scales: {
       x: {

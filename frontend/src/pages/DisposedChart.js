@@ -77,9 +77,13 @@ const DisposedChart = ({ wdata, fyear }) => {
       };
     });
 
-    setElables(labelsArray); // Set labels for x-axis
-    setDatasets(tempDatasets); // Set datasets for chart
+    setElables(labelsArray); 
+    setDatasets(tempDatasets); 
   }, [wdata, fyear]);
+
+    if (!fyear || fyear.length === 0) {
+    return null;
+  }
 
   const data = {
     labels: elabels,

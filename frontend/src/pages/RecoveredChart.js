@@ -75,9 +75,13 @@ const RecoveredChart = ({ wdata, fyear }) => {
       };
     });
 
-    setElables(labelsArray); // Set labels for x-axis
-    setDatasets(tempDatasets); // Set datasets for chart
+    setElables(labelsArray); 
+    setDatasets(tempDatasets); 
   }, [wdata, fyear]);
+
+  if (!fyear || fyear.length === 0) {
+    return null;
+  }
 
   const data = {
     labels: elabels,
@@ -109,7 +113,7 @@ const RecoveredChart = ({ wdata, fyear }) => {
       },
       title: {
         display: true,
-        text: "Disposed Units by Fiscal Year",
+        text: "Recovered Units by Fiscal Year",
         font: {
           size: 15,
           weight: "lighter",

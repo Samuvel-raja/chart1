@@ -30,7 +30,7 @@ const WaterUpload = ({
   handleDownload,
   handleSubmit2,
   waterdata,
-  Refresh,
+  refresh,
   setRefresh,
 }) => {
   const [wdata, setwdata] = useState({});

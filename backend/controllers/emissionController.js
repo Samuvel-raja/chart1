@@ -126,10 +126,32 @@ const getAllEmissions = async (req, res) => {
 };
 
 const updateEmission = async (req, res) => {
+  // const {
+  //   start_date,
+  //   end_date,
+  //   fyear,
+  //   description,
+  //   emissions,
+  //   type,
+  //   scope,
+  //   organization,
+  // } = req.body;
+
+  // const updateData = {};
+  // if (start_date) updateData.start_date = start_date;
+  // if (end_date) updateData.end_date = end_date;
+  // if (type) updateData.type = type;
+  // if (emissions) updateData.emissions = emissions;
+  // if (description) updateData.description = description;
+  // if (scope) updateData.scope = scope;
+  // if (fyear) updateData.fyear = fyear;
+  // if (organization) updateData.organization = organization;
   try {
-    const emission = await emissionModel
-      .findByIdAndUpdate(req.params.id, req.body, { new: true })
-      .populate("organization");
+    const emission = await emissionModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
     if (!emission) {
       return res.status(404).send({ message: "Emission not found" });
@@ -153,9 +175,9 @@ const deleteEmission = async (req, res) => {
 
 const getSingleEmission = async (req, res) => {
   const id = req.params.id;
-  
+
   try {
-    const singledata = await emissionModel.findOne({_id:id})
+    const singledata = await emissionModel.findOne({ _id: id }).populate('organization').populate('fyear');
     return res.status(200).send(singledata);
   } catch (err) {
     return res.status(400).send(err);
