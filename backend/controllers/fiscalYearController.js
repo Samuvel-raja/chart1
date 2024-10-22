@@ -6,11 +6,7 @@ const creatYears = async (req, res) => {
   const user = await userModel.findOne({ token });
   const Userorganization = user.organization;
   const fyear = req.body.fiscalyear;
-  const existingYear = await yearModel.findOne({ fiscalyear: fyear });
 
-  if (existingYear) {
-    return res.status(400).send({ message: "Year already exists" });
-  }
   try {
     const newyears = new yearModel({
       fiscalyear: req.body.yearval,

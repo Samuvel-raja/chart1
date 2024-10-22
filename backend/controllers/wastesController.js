@@ -1,5 +1,5 @@
-
 const fiscalYearModel = require("../models/fiscalYearModel");
+const organizationModel = require("../models/organizationModel");
 const userModel = require("../models/userModel");
 const wasteModel = require("../models/wastesModel");
 
@@ -86,6 +86,25 @@ const createWaste = async (req, res) => {
 };
 const updateWaste = async (req, res) => {
   const id = req.params.id;
+  const { fyear, organization } = req.body;
+  const fyearvalues = await fiscalYearModel.findOne({
+    fiscalyear: fyear.fiscalyear,
+  });
+  if (!fyearvalues) {
+    return res.status(400).send({ mess: "NO data found" });
+  }
+  const fyeardata = await fiscalYearModel.findByIdAndUpdate(
+    fyearvalues._id,
+    { fiscalyear: fyearvalues.fiscalyear },
+    { new: true }
+  );
+  const organizationdata = await organizationModel.findByIdAndUpdate(
+    organization._id,
+    organization,
+    { new: true }
+  );
+  req.body.organization = organizationdata._id;
+  req.body.fyear = fyeardata._id;
   try {
     const updatewaste = await wasteModel.findByIdAndUpdate(id, req.body, {
       new: true,
@@ -126,22 +145,24 @@ const deleteWaste = async (req, res) => {
   }
 };
 
-const getSingleWaste=async(req,res)=>
-{const id=req.params.id;
+const getSingleWaste = async (req, res) => {
+  const id = req.params.id;
+
   try {
-    const singledata=await wasteModel.findOne({_id:id});
+    const singledata = await wasteModel
+      .findOne({ _id: id })
+      .populate("fyear")
+      .populate("organization");
     return res.status(200).send(singledata);
   } catch (err) {
     return res.status(400).send(err);
-
   }
-  
-}
+};
 module.exports = {
   createWaste,
   getAllWastes,
   deleteAllWastes,
   updateWaste,
   deleteWaste,
-  getSingleWaste
+  getSingleWaste,
 };

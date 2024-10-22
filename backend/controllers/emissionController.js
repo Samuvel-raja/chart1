@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const emissionModel = require("../models/emissionModel");
 const userModel = require("../models/userModel");
 const fiscalYearModel = require("../models/fiscalYearModel");
+const organizationModel = require("../models/organizationModel");
 const transformCSVData = (data, fid, id) => {
   return data.map((item) => {
     const [start_date, end_date, description, emissions, type, scope] =
@@ -126,27 +127,26 @@ const getAllEmissions = async (req, res) => {
 };
 
 const updateEmission = async (req, res) => {
-  // const {
-  //   start_date,
-  //   end_date,
-  //   fyear,
-  //   description,
-  //   emissions,
-  //   type,
-  //   scope,
-  //   organization,
-  // } = req.body;
+  const { fyear, organization } = req.body;
 
-  // const updateData = {};
-  // if (start_date) updateData.start_date = start_date;
-  // if (end_date) updateData.end_date = end_date;
-  // if (type) updateData.type = type;
-  // if (emissions) updateData.emissions = emissions;
-  // if (description) updateData.description = description;
-  // if (scope) updateData.scope = scope;
-  // if (fyear) updateData.fyear = fyear;
-  // if (organization) updateData.organization = organization;
   try {
+  
+    const fyeardata = await fiscalYearModel.findOne({fiscalyear:fyear.fiscalyear});
+    if (!fyeardata) {
+      return res.status(404).send({ message: "Fiscal year not found" });
+    }
+  const updatefiscaldata=await fiscalYearModel.findByIdAndUpdate(fyeardata._id,{fiscalyear:fyear.fiscalyear});
+    const organizationdata = await organizationModel.findByIdAndUpdate(
+      organization._id,
+      organization
+    );
+    if (!organizationdata) {
+      return res.status(404).send({ message: "Organization not found" });
+    }
+
+    req.body.fyear = updatefiscaldata?._id;
+    req.body.organization = organizationdata._id;
+
     const emission = await emissionModel.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -177,7 +177,10 @@ const getSingleEmission = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const singledata = await emissionModel.findOne({ _id: id }).populate('organization').populate('fyear');
+    const singledata = await emissionModel
+      .findOne({ _id: id })
+      .populate("organization")
+      .populate("fyear");
     return res.status(200).send(singledata);
   } catch (err) {
     return res.status(400).send(err);

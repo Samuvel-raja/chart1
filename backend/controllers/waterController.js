@@ -1,6 +1,8 @@
 const userModel = require("../models/userModel");
 const waterModel = require("../models/waterModel");
 const yearModel = require("../models/fiscalYearModel");
+const fiscalYearModel = require("../models/fiscalYearModel");
+const organizationModel = require("../models/organizationModel");
 
 const transformData = (data, organizationId, fiscalId) => {
   // console.log(data);
@@ -88,7 +90,25 @@ const createWater = async (req, res) => {
 
 const updateWater = async (req, res) => {
   const id = req.params.id;
-
+  const { fyear, organization } = req.body;
+  const fyearvalues = await fiscalYearModel.findOne({ fiscalyear:fyear.fiscalyear});
+  if (!fyearvalues) {
+    return res.status(400).send({ mess: "No data found" });
+  }
+  const fyeardata = await fiscalYearModel.findByIdAndUpdate(
+    fyearvalues._id,
+    { fiscalyear: fyearvalues.fiscalyear },
+    {
+      new: true,
+    }
+  );
+  const organizationdata = await organizationModel.findByIdAndUpdate(
+    organization._id,
+    organization,
+    { new: true }
+  );
+  req.body.fyear = fyeardata._id;
+  req.body.organization = organizationdata._id;
   try {
     const updatewater = await waterModel.findByIdAndUpdate(id, req.body, {
       new: true,
@@ -140,7 +160,10 @@ const deleteAllWaters = async (req, res) => {
 const getSingleWater = async (req, res) => {
   const id = req.params.id;
   try {
-    const singlewater = await waterModel.findOne({ _id: id });
+    const singlewater = await waterModel
+      .findOne({ _id: id })
+      .populate("fyear")
+      .populate("organization");
     return res.status(200).send(singlewater);
   } catch (err) {
     return res.status(400).send(err);

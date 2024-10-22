@@ -8,15 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import "../styles/updateForm.css";
-import {
-  Box,
-  Button,
-  Modal,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from "@mui/material";
+
+import { Box, Button, Modal, TextField } from "@mui/material";
 import {
   getSingleEmissionApi,
   updateEmissionApi,
@@ -33,7 +26,7 @@ const EmissionUpload = ({
   edata,
   handleDownload,
   handleDeleteEmission,
-  refresh,
+  customStyle,
   setRefresh,
 }) => {
   const [emdata, setemdata] = useState({});
@@ -54,25 +47,24 @@ const EmissionUpload = ({
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target.value;
-
-    // if (name.includes(".")) {
-    //   const { parentkey, childkey } = name.split(".");
-    //   setemdata((prevdata) => ({
-    //     ...prevdata,
-    //     [parentkey]: {
-    //       ...prevdata[parentkey],
-    //       [childkey]: value,
-    //     },
-    //   }));
-    // } else {
-      setemdata({ ...emdata, [e.target.name]: e.target.value });
-    // }
+    setemdata({ ...emdata, [e.target.name]: e.target.value });
   };
+
+  const handleChangeOrganization = (e) => {
+    setemdata({
+      ...emdata,
+      organization: {
+        ...emdata.organization,
+        organization: e.target.value,
+      },
+    });
+  };
+
   const handleUpdateEmission = async (e) => {
     e.preventDefault();
     try {
       await updateEmissionApi(id, emdata);
+      console.log(emdata);
     } catch (err) {
       console.log(err);
     }
@@ -95,10 +87,23 @@ const EmissionUpload = ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 600,
-    height: 700,
+    height: 800,
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 5,
+  };
+  const handleChangeFiscal = (val) => {
+    setemdata({
+      ...emdata,
+      fyear: {
+        ...emdata.fyear,
+        fiscalyear: val.value,
+      },
+    });
+  };
+  const defaultOption = {
+    label: emdata.fyear?.fiscalyear,
+    value: emdata.fyear?.fiscalyear,
   };
 
   return (
@@ -135,12 +140,13 @@ const EmissionUpload = ({
               <Table component={Paper}>
                 <TableHead>
                   <TableRow>
+                    <TableCell>S.No</TableCell>
                     <TableCell>Start_date</TableCell>
                     <TableCell>end_date</TableCell>
                     <TableCell>Description </TableCell>
                     <TableCell>Emission Units </TableCell>
                     <TableCell>Type</TableCell>
-                    {/* <TableCell>Fiscal Year</TableCell> */}
+                    <TableCell>Fiscal Year</TableCell>
                     <TableCell>SCope</TableCell>
                     <TableCell>Organization</TableCell>
                     <TableCell>Delete</TableCell>
@@ -151,12 +157,13 @@ const EmissionUpload = ({
                   {edata.map((val, index) => (
                     <>
                       <TableRow key={val._id}>
+                        <TableCell>{index + 1}</TableCell>
                         <TableCell>{val.start_date}</TableCell>
                         <TableCell>{val.end_date}</TableCell>
                         <TableCell>{val.description}</TableCell>
                         <TableCell>{val.emissions}</TableCell>
                         <TableCell>{val.type}</TableCell>
-                        {/* <TableCell>{val.fyear.fiscalyear}</TableCell> */}
+                        <TableCell>{val.fyear?.fiscalyear}</TableCell>
                         <TableCell>{val.scope}</TableCell>
                         <TableCell>{val.organization.organization}</TableCell>
                         <TableCell>
@@ -244,16 +251,19 @@ const EmissionUpload = ({
                     onChange={handleChange}
                   />
                 </div>
-                {/* <div className="fields">
+                <div className="fiscal-select">
                   <label htmlFor="">Fiscal Year</label>
-                  <input
-                    type="text"
-                    placeholder="Enter your fiscalyear"
-                    name="fyear.fiscalyear"
-                    value={emdata.fyear?.fiscalyear}
-                    onChange={handleChange}
+                  <Select
+                    value={defaultOption}
+                    onChange={handleChangeFiscal}
+                    defaultValue={{
+                      label: emdata.fyear?.fiscalyear,
+                      value: emdata.fyear?.fiscalyear,
+                    }}
+                    options={options}
+                    styles={customStyle}
                   />
-                </div> */}
+                </div>
                 <div className="fields">
                   <label htmlFor="">Scope</label>
                   <input
@@ -264,10 +274,16 @@ const EmissionUpload = ({
                     onChange={handleChange}
                   />
                 </div>
-
-                {/* <div className="fields">
-            <button>Sign in</button>
-          </div> */}
+                <div className="fields">
+                  <label htmlFor="">Organization</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your scope"
+                    name="organization"
+                    value={emdata.organization?.organization}
+                    onChange={handleChangeOrganization}
+                  />
+                </div>
               </div>
               <div className="form-footer">
                 <Button type="submit" variant="contained">

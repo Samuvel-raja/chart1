@@ -25,12 +25,12 @@ const WaterUpload = ({
   handleChangeWater,
   handleDeleteWater,
   options,
-  customStyles,
   handleChange2,
   handleDownload,
   handleSubmit2,
   waterdata,
-  refresh,
+  customStyle,
+  customStyles,
   setRefresh,
 }) => {
   const [wdata, setwdata] = useState({});
@@ -71,18 +71,41 @@ const WaterUpload = ({
     setOpen(true);
   };
 
+  const handleChangeOrganization = (val) => {
+    setwdata({
+      ...wdata,
+      organization: {
+        ...wdata.organization,
+        organization: val.value,
+      },
+    });
+  };
+
   const handleClose = () => setOpen(false);
-  
+
   const style = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 600,
-    height: 700,
+    height: 800,
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 5,
+  };
+  const handleChangeFiscal = (val) => {
+    setwdata({
+      ...wdata,
+      fyear: {
+        ...wdata.fyear,
+        fiscalyear: val.value,
+      },
+    });
+  };
+  const defaultOption = {
+    label: wdata.fyear?.fiscalyear,
+    value: wdata.fyear?.fiscalyear,
   };
   return (
     <>
@@ -115,9 +138,11 @@ const WaterUpload = ({
               <Table component={Paper}>
                 <TableHead>
                   <TableRow>
+                    <TableCell>S.NO</TableCell>
                     <TableCell>Start_date</TableCell>
                     <TableCell>End_date</TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell>FiscalYear</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell>Units</TableCell>
                     <TableCell>Organization</TableCell>
@@ -128,14 +153,14 @@ const WaterUpload = ({
                 <TableBody>
                   {waterdata.map((val, index) => (
                     <TableRow key={val._id}>
+                      <TableCell>{index + 1}</TableCell>
                       <TableCell>{val.start_date}</TableCell>
                       <TableCell>{val.end_date}</TableCell>
                       <TableCell>{val.status}</TableCell>
+                      <TableCell>{val?.fyear?.fiscalyear}</TableCell>
                       <TableCell>{val.type}</TableCell>
                       <TableCell>{val.units}</TableCell>
-                      <TableCell>
-                        {val.organization.organization.trim()}
-                      </TableCell>
+                      <TableCell>{val.organization.organization}</TableCell>
                       <TableCell>
                         <Button
                           onClick={() => handleDeleteWater(val._id)}
@@ -219,6 +244,26 @@ const WaterUpload = ({
                     name="status"
                     value={wdata.status}
                     onChange={handleChange}
+                  />
+                </div>
+                <div className="fiscal-select">
+                  <label htmlFor="">Fiscal Year</label>
+
+                  <Select
+                    value={defaultOption}
+                    onChange={handleChangeFiscal}
+                    options={options}
+                    styles={customStyle}
+                  />
+                </div>
+                <div className="fields">
+                  <label htmlFor="">Organization</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your scope"
+                    name="organization"
+                    value={wdata.organization?.organization}
+                    onChange={handleChangeOrganization}
                   />
                 </div>
 

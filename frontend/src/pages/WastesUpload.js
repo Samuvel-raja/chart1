@@ -7,18 +7,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import {
-  Box,
-  Button,
-  Modal,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Link } from "react-router-dom";
+import { Box, Button, Modal, TextField } from "@mui/material";
+
 import { getSingleWasteApi, updateWasteApi } from "../apicalls/wastesApi";
-import { updateWaterApi } from "../apicalls/waterApi";
 
 const WastesUpload = ({
   selopt,
@@ -32,7 +23,7 @@ const WastesUpload = ({
   handleDeleteWaste,
   SelectedOption3,
   setRefresh,
-  refresh,
+  customStyle,
 }) => {
   const [wsdata, setwsdata] = useState({});
   const [id, setid] = useState("");
@@ -80,12 +71,35 @@ const WastesUpload = ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 600,
-    height:700,
+    height: 800,
     bgcolor: "background.paper",
     boxShadow: 24,
-    p:5
+    p: 5,
   };
 
+  const handleChangeOrganization = (e) => {
+    setwsdata({
+      ...wsdata,
+      organization: {
+        ...wsdata.organization,
+        organization: e.target.value,
+      },
+    });
+  };
+  const handleChangeFiscal = (val) => {
+    setwsdata({
+      ...wsdata,
+      fyear: {
+        ...wsdata.fyear,
+        fiscalyear: val.value,
+      },
+    });
+  };
+
+  const defaultOption = {
+    label: wsdata.fyear?.fiscalyear,
+    value: wsdata.fyear?.fiscalyear,
+  };
   return (
     <>
       {selopt === "Upload wastes Data" && (
@@ -117,10 +131,13 @@ const WastesUpload = ({
               <Table component={Paper}>
                 <TableHead>
                   <TableRow>
+                    <TableCell>S.NO</TableCell>
                     <TableCell>Start_date</TableCell>
                     <TableCell>End_date</TableCell>
                     <TableCell>Category</TableCell>
                     <TableCell>Quantity</TableCell>
+                    <TableCell>FiscalYear</TableCell>
+                    <TableCell>Organization</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell>Delete</TableCell>
                     <TableCell>Update</TableCell>
@@ -129,18 +146,27 @@ const WastesUpload = ({
                 <TableBody>
                   {wastedata.map((val, index) => (
                     <TableRow key={val._id}>
+                      <TableCell>{index + 1}</TableCell>
                       <TableCell>{val.start_date}</TableCell>
                       <TableCell>{val.end_date}</TableCell>
                       <TableCell>{val.category}</TableCell>
                       <TableCell>{val.quantity}</TableCell>
+                      <TableCell>{val.fyear?.fiscalyear}</TableCell>
+                      <TableCell>{val.organization.organization}</TableCell>
                       <TableCell>{val.type}</TableCell>
                       <TableCell>
-                        <Button onClick={() => handleDeleteWaste(val._id)} variant="contained">
+                        <Button
+                          onClick={() => handleDeleteWaste(val._id)}
+                          variant="contained"
+                        >
                           Delete
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <Button onClick={() => handleOpen(val._id)} variant="contained">
+                        <Button
+                          onClick={() => handleOpen(val._id)}
+                          variant="contained"
+                        >
                           Update
                         </Button>
                       </TableCell>
@@ -211,6 +237,26 @@ const WastesUpload = ({
                     name="category"
                     value={wsdata.category}
                     onChange={handleChange}
+                  />
+                </div>
+                <div className="fiscal-select">
+                  <label htmlFor="">Fiscal Year</label>
+                  <Select
+                    value={defaultOption}
+                    onChange={handleChangeFiscal}
+                    options={options}
+                    styles={customStyle}
+                  />
+                </div>
+
+                <div className="fields">
+                  <label htmlFor="">Organization</label>
+                  <input
+                    type="text"
+                    placeholder="Enter your scope"
+                    name="organization"
+                    value={wsdata.organization?.organization}
+                    onChange={handleChangeOrganization}
                   />
                 </div>
               </div>

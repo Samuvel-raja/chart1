@@ -12,7 +12,6 @@ import {
 } from "../apicalls/waterApi";
 import {
   deleteWasteApi,
-  deleteWastesApi,
   getAllWastesApi,
   postWastesApi,
 } from "../apicalls/wastesApi";
@@ -160,6 +159,7 @@ const Uploads = () => {
         SelectedOption: SelectedOption1,
         typeofdata: typeofdata,
       });
+      setRefresh((prev) => !prev);
     } catch (error) {
       console.log(error);
     }
@@ -270,6 +270,7 @@ const Uploads = () => {
         typeofdata,
         SelectedOption: SelectedOption2,
       });
+      setRefresh((prev) => !prev);
     } catch (err) {
       console.log(err);
     }
@@ -284,6 +285,7 @@ const Uploads = () => {
         typeofdata,
         SelectedOption: SelectedOption3,
       });
+      setRefresh((prev) => !prev);
     } catch (err) {
       console.log(err);
     }
@@ -327,7 +329,6 @@ const Uploads = () => {
     try {
       await deleteEmissionApi(id);
       setRefresh((prev) => !prev);
-     
     } catch (err) {
       console.log(err);
     }
@@ -374,6 +375,28 @@ const Uploads = () => {
     );
     return jsDate.toISOString().split("T")[0];
   };
+  const customStyle = {
+    control: (provided) => ({
+      ...provided,
+      width: "100%",
+      height: "20%",
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      height: "2%",
+      display: "flex",
+      alignItems: "center",
+    }),
+    indicatorsContainer: (provided) => ({
+      ...provided,
+      height: "2%",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      width: "100%",
+    }),
+  };
+
   return (
     <>
       <div className="uploads-main-cont">
@@ -415,6 +438,7 @@ const Uploads = () => {
             handleYearSubmit={handleYearSubmit}
             refresh={refresh}
             setRefresh={setRefresh}
+            customStyle={customStyle}
           />
           <EmissionUpload
             selopt={selopt}
@@ -429,6 +453,7 @@ const Uploads = () => {
             handleDeleteEmission={handleDeleteEmission}
             refresh={refresh}
             setRefresh={setRefresh}
+            customStyle={customStyle}
           />
 
           <WaterUpload
@@ -444,6 +469,7 @@ const Uploads = () => {
             handleDeleteWater={handleDeleteWater}
             refresh={refresh}
             setRefresh={setRefresh}
+            customStyle={customStyle}
           />
 
           <WastesUpload
@@ -459,6 +485,7 @@ const Uploads = () => {
             handleDeleteWaste={handleDeleteWaste}
             refresh={refresh}
             setRefresh={setRefresh}
+            customStyle={customStyle}
           />
         </div>
       </div>

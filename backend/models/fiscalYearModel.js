@@ -4,11 +4,9 @@ const yearsSchema = new mongoose.Schema({
   fiscalyear: {
     type: String,
     required: true,
-    unique: true,
   },
   organization: {
     type: mongoose.Schema.Types.ObjectId,
-    unique: true,
     ref: "organization",
   },
 });

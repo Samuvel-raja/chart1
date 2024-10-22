@@ -23,7 +23,7 @@ const OrganizationUpload = ({
           <div className="add-year-container">
             <div className="organization-banner">
               <Typography variant="h4" sx={{ color: "rgb(52, 25, 218)" }}>
-                Organization:{" "}
+                Organization:
               </Typography>
               <Typography variant="h4"> {userOrganization}</Typography>
             </div>

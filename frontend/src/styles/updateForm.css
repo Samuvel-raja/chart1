@@ -3,15 +3,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 60vh;
+    height: 75vh;
   }
 
   .update-container form {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding: 30px;
-    box-shadow: var(--form-box-shadow);
+    padding: 20px;
     opacity: 70%;
     font-size: smaller;
    
@@ -32,9 +31,9 @@
     gap: 10px;
   }
   .update-container form .form-main .fields input {
-    height: 35px;
-    width: 350px;
-    padding: 5px;
+    height: 40px;
+    width: 450px;
+    padding: 10px;
     border-radius: 5px;
     border: 1px solid var(--lightgray);
   }
